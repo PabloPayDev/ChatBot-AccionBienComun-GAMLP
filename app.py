@@ -207,6 +207,9 @@ def enviar_mensajes_whatsapp(texto, numero):
     global metaToken
     global flowStep
 
+    logging.info(texto)
+    logging.info(flowStep)
+
     if(("test") in (texto.lower())):
         flowStep = 1
         data = {
