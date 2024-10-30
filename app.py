@@ -15,6 +15,12 @@ db = client['meta_db_100J']
 metaToken = "EAAWXJp8ZCZCyABO3fq54rxbxShlRehZBN65sHRZBhVpKgpXkrPEH9CND0f8qMQVee1BDGOZAGPYVoDN3UJddqxmvnH1tqRMc0SJ7r8EEIJQYBHpp2MlLZCliZC6hRu8AQoCZBIx2Jxsbh3CwAeV3za2Af98YLuhlZAaJVXpJu3KQN5GYpoZBZBFAwNZC6Mp3nVyCWeBwq0hDzvcHCk84hTkvZCvGLA1u2"
 webhookToken = "CHATBOTTOKENTEST"
 
+metaDomain = "graph.facebook.com"
+metaPath = "/v20.0/374877792366425/messages"
+
+blogDomain = "https://lapaz.bo"
+blogPath = "/wp-json/catastroPlugin/v1/posts-categoria/catastroChatbot"
+
 logging.basicConfig(level=logging.DEBUG)
 
 # ======= ======= ======= ROUTING SECTION ======= ======= =======
@@ -40,6 +46,102 @@ def add_data():
     collection.insert_one(new_data)
     return jsonify(json_serializer(new_data)), 201
 # ======= ======= ======= ======= ======= ======= =======
+# ======= ======= TEXT TO USE ======= =======
+blogLastPost = []
+
+conn = http.client.HTTPSConnection(blogDomain)
+conn.request("GET", blogPath)
+response = conn.getresponse()
+if(response.status == 200):
+    data = response.read().decode('utf-8')
+    json_data = json.loads(data)
+    blogLastPost = json_data[0]
+else:
+    print(f"Error en la solicitud: {response.status} {response.reason}")
+conn.close()
+
+flow0 = [
+    (blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"]),
+    blogLastPost["featured_image"]
+]
+
+flow1 = [
+    "¡Hola! Bienvenido/a al proyecto “100 jueves de Acción por el Bien Común”. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
+    "Selecciona una de las opciones.",
+    [
+        "btnOpt1",
+        "1️⃣. Quiero saber más sobre el programa"
+    ],
+    [
+        "btnOpt2",
+        "2️⃣. Quiero hacer una solicitud"
+    ],
+    [
+        "btnOpt3",
+        "3️⃣. Tengo otra consulta"
+    ]
+]
+flow2 = [
+    "Como fue tu experiencia general en la atencion?",
+     "Ver opciones",
+     "Selecciona una de las opciones",
+    [
+        "btnOpt1",
+        "1️⃣. Muy mala"
+    ],
+    [
+        "btnOpt2",
+        "2️⃣. Mala"
+    ],
+    [
+        "btnOpt3",
+        "3️⃣. Media"
+    ]
+]
+
+flow3 = [
+    "El tiempo de espera fue:",
+    "Ver opciones",
+    "Selecciona una de las opciones",
+    [
+        "btnOpt1",
+        "1️⃣. Muy lento."
+    ],
+    [
+        "btnOpt2",
+        "2️⃣. Lento"
+    ],
+    [
+        "btnOpt3",
+        "3️⃣. Medio"
+    ]
+]
+
+flow4 = [
+    "Desea agregar una nota sobre su experiencia? \n\n Ej: Buena actitud del operador de plataforma."
+]
+
+flow5 = [
+    "Gracias por su retroalimentacion",
+    [
+        "btnOpt1",
+        "1️⃣. Finalizar"
+    ]
+]
+
+flowInvalid = [
+    "Su respuesta no es valida, porfavor ingrese lo que se especifica."
+]
+
+chatbotFlowMessages = [
+    flow1,
+    flow2,
+    flow3,
+    flow4,
+    flow5,
+    flowInvalid
+]
+# ======= ======= ======= ======= =======
 # ======= ======= ======= SOME FUNCTIONS SECTION ======= ======= =======
 def json_serializer(data):
     if isinstance(data, ObjectId):
@@ -99,7 +201,8 @@ def recibir_mensaje(req):
     except Exception as e:
         app.logger.debug('Error: Recibir mensaje')
         return jsonify({'message':'EVENT RECEIVED'})
-
+    
+flowStep = 0
 def enviar_mensajes_whatsapp(texto, numero):
     global metaToken
     global flowStep
@@ -116,7 +219,34 @@ def enviar_mensajes_whatsapp(texto, numero):
                 "body": "Hola, Bienvenido"
             }
         }
+    # ======= ======= ======= ENVIAR IMAGEN BLOG ======= ======= =======
     elif(("hola" in (texto.lower()))and(flowStep==0)):
+        
+        dataBlog = {
+            "messaging_product": "whatsapp",
+            "recipient_type": "individual",
+            "to": numero,
+            "type": "image",
+            "image": {
+                "id" : "img1", 
+                "link": "https://lapaz.bo/wp-content/uploads/2024/08/ccc0.png", 
+                "caption": "Horarios de atención  Plataformas de la ACM"
+            }
+        }
+        headersBlog = {
+            "Content-Type" : "application/json",
+            "Authorization": "Bearer "+metaToken
+        }
+        connection = http.client.HTTPSConnection(metaDomain)
+        try:
+            connection.request("POST", metaPath, dataBlog, headersBlog)
+            response = connection.getresponse()
+            print(response.status, response.reason)
+        except Exception as e:
+            addMessageLog(json.dumps(e))
+        finally:
+            connection.close()
+
         data = {
             "messaging_product": "whatsapp",    
             "recipient_type": "individual",
@@ -143,6 +273,7 @@ def enviar_mensajes_whatsapp(texto, numero):
                 }                
             }
         }
+    # ======= ======= ======= ======= ======= ======= =======
 
     else:
         data = {
@@ -163,7 +294,6 @@ def enviar_mensajes_whatsapp(texto, numero):
     }
 
     connection = http.client.HTTPSConnection("graph.facebook.com")
-
     try:
         connection.request("POST", "/v20.0/374877792366425/messages", data, headers)
         response = connection.getresponse()
