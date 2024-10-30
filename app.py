@@ -22,6 +22,7 @@ blogDomain = "lapaz.bo"
 blogPath = "/wp-json/catastroPlugin/v1/posts-categoria/catastroChatbot"
 
 logging.basicConfig(level=logging.DEBUG)
+app.logger.setLevel(logging.DEBUG)
 
 # ======= ======= ======= ROUTING SECTION ======= ======= =======
 @app.route('/webhook', methods=['GET','POST'])
