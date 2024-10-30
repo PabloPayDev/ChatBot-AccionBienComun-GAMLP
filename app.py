@@ -70,7 +70,7 @@ def recibir_mensaje(req):
             messages = objeto_mensaje[0]
             if("type" in messages):
                 tipo = messages["type"]
-                addMessage(json.dumps(messages))
+                #addMessage(json.dumps(messages))
 
                 if(tipo == "interactive"):
                     tipo_interactivo = messages["interactive"]["type"]
@@ -99,6 +99,7 @@ def recibir_mensaje(req):
         return jsonify({'message':'EVENT RECEIVED'})
 
 def enviar_mensajes_whatsapp(texto, numero):
+    global metaToken
     global flowStep
 
     if(("test") in (texto.lower())):
