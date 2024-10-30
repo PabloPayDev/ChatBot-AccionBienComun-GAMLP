@@ -15,6 +15,8 @@ db = client['meta_db_100J']
 metaToken = "EAAWXJp8ZCZCyABO3fq54rxbxShlRehZBN65sHRZBhVpKgpXkrPEH9CND0f8qMQVee1BDGOZAGPYVoDN3UJddqxmvnH1tqRMc0SJ7r8EEIJQYBHpp2MlLZCliZC6hRu8AQoCZBIx2Jxsbh3CwAeV3za2Af98YLuhlZAaJVXpJu3KQN5GYpoZBZBFAwNZC6Mp3nVyCWeBwq0hDzvcHCk84hTkvZCvGLA1u2"
 webhookToken = "CHATBOTTOKENTEST"
 
+logging.basicConfig(level=logging.DEBUG)
+
 # ======= ======= ======= ROUTING SECTION ======= ======= =======
 @app.route('/webhook', methods=['GET','POST'])
 def webhook():
@@ -173,7 +175,8 @@ def enviar_mensajes_whatsapp(texto, numero):
 # ======= ======= ======= ======= ======= ======= =======
 # ======= ======= ======= APP INIT SECTION ======= ======= =======
 if __name__ == '__main__':
-    #app.run(debug=True)
+    app.run(host='0.0.0.0',port=80,debug=True)
+    """
     data = [
         ['Nombre', 'Edad', 'Ciudad'],
         ['Alice', 30, 'Nueva York'],
@@ -183,4 +186,5 @@ if __name__ == '__main__':
 
     df = pd.DataFrame(data[1:], columns=data[0])
     df.to_excel('datos.xlsx', index=False)
+    """
 # ======= ======= ======= ======= ======= ======= =======
