@@ -18,7 +18,7 @@ webhookToken = "CHATBOTTOKENTEST"
 metaDomain = "graph.facebook.com"
 metaPath = "/v20.0/374877792366425/messages"
 
-blogDomain = "https://lapaz.bo"
+blogDomain = "lapaz.bo"
 blogPath = "/wp-json/catastroPlugin/v1/posts-categoria/catastroChatbot"
 
 logging.basicConfig(level=logging.DEBUG)
