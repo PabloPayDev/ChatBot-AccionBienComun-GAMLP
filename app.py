@@ -12,7 +12,7 @@ app = Flask(__name__)
 client = MongoClient('mongodb://localhost:27017/')
 db = client['meta_db_100J']
 
-metaToken = "EAAHjoggR6icBO3JYyQiMY7nmCeoYhe6UGi5KPyeG0KnfCfWACDmgKmyZBC0Ul162cTcsPWNFdQadpmx88cDEZCoVNpWbxWZAigFd4SalIn1UeQTYXZACSKJvVFCSW6KxBPdtZAWQzVaLsU9EEgXZBzoEsUjdUZAdpuFXdIgRRl1ezvhg61rGU9JsHW8b6632qTJDIhZCKeZAtaovF6sTbndTNg5xq"
+metaToken = "EAAWXJp8ZCZCyABO3fq54rxbxShlRehZBN65sHRZBhVpKgpXkrPEH9CND0f8qMQVee1BDGOZAGPYVoDN3UJddqxmvnH1tqRMc0SJ7r8EEIJQYBHpp2MlLZCliZC6hRu8AQoCZBIx2Jxsbh3CwAeV3za2Af98YLuhlZAaJVXpJu3KQN5GYpoZBZBFAwNZC6Mp3nVyCWeBwq0hDzvcHCk84hTkvZCvGLA1u2"
 webhookToken = "CHATBOTTOKENTEST"
 
 # ======= ======= ======= ROUTING SECTION ======= ======= =======
