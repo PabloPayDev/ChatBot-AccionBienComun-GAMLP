@@ -266,22 +266,22 @@ def enviar_mensajes_whatsapp(texto, numero):
             data = response.read().decode('utf-8')
             json_data = json.loads(data)
             blogLastPost = json_data[0]
+            app.logger.debug("======= =======")
+            app.logger.debug(blogLastPost)
+            app.logger.debug("======= =======")
+            data = {
+                "messaging_product": "whatsapp",
+                "recipient_type": "individual",
+                "to": numero,
+                "type": "image",
+                "image": {
+                    "link": blogLastPost["featured_image"], 
+                    "caption": "Horarios de atención  Plataformas de la ACM"
+                }
+            }
         else:
             print(f"Error en la solicitud: {response.status} {response.reason}")
         conn.close()
-        app.logger.debug("======= =======")
-        app.logger.debug(blogLastPost)
-        app.logger.debug("======= =======")
-        data = {
-            "messaging_product": "whatsapp",
-            "recipient_type": "individual",
-            "to": numero,
-            "type": "image",
-            "image": {
-                "link": "https://lapaz.bo/wp-content/uploads/2024/08/ccc0.png", 
-                "caption": "Horarios de atención  Plataformas de la ACM"
-            }
-        }
     # ======= ======= ======= ======= ======= ======= =======
     # ======= ======= ======= ======= ======= ======= =======
     else:
