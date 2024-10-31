@@ -48,100 +48,8 @@ def add_data():
     return jsonify(json_serializer(new_data)), 201
 # ======= ======= ======= ======= ======= ======= =======
 # ======= ======= TEXT TO USE ======= =======
-blogLastPost = []
 
-conn = http.client.HTTPSConnection(blogDomain)
-conn.request("GET", blogPath)
-response = conn.getresponse()
-if(response.status == 200):
-    data = response.read().decode('utf-8')
-    json_data = json.loads(data)
-    blogLastPost = json_data[0]
-else:
-    print(f"Error en la solicitud: {response.status} {response.reason}")
-conn.close()
 
-flow0 = [
-    (blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"]),
-    blogLastPost["featured_image"]
-]
-
-flow1 = [
-    "¡Hola! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
-    "Selecciona una de las opciones.",
-    [
-        "btnOpt1",
-        "1️⃣. Quiero saber más sobre el programa"
-    ],
-    [
-        "btnOpt2",
-        "2️⃣. Quiero hacer una solicitud"
-    ],
-    [
-        "btnOpt3",
-        "3️⃣. Tengo otra consulta"
-    ]
-]
-flow2 = [
-    "Como fue tu experiencia general en la atencion?",
-     "Ver opciones",
-     "Selecciona una de las opciones",
-    [
-        "btnOpt1",
-        "1️⃣. Muy mala"
-    ],
-    [
-        "btnOpt2",
-        "2️⃣. Mala"
-    ],
-    [
-        "btnOpt3",
-        "3️⃣. Media"
-    ]
-]
-
-flow3 = [
-    "El tiempo de espera fue:",
-    "Ver opciones",
-    "Selecciona una de las opciones",
-    [
-        "btnOpt1",
-        "1️⃣. Muy lento."
-    ],
-    [
-        "btnOpt2",
-        "2️⃣. Lento"
-    ],
-    [
-        "btnOpt3",
-        "3️⃣. Medio"
-    ]
-]
-
-flow4 = [
-    "Desea agregar una nota sobre su experiencia? \n\n Ej: Buena actitud del operador de plataforma."
-]
-
-flow5 = [
-    "Gracias por su retroalimentacion",
-    [
-        "btnOpt1",
-        "1️⃣. Finalizar"
-    ]
-]
-
-flowInvalid = [
-    "Su respuesta no es valida, porfavor ingrese lo que se especifica."
-]
-
-chatbotFlowMessages = [
-    flow1,
-    flow2,
-    flow3,
-    flow4,
-    flow5,
-    flowInvalid
-]
 # ======= ======= ======= ======= =======
 # ======= ======= ======= SOME FUNCTIONS SECTION ======= ======= =======
 def json_serializer(data):
@@ -209,7 +117,6 @@ def enviar_mensajes_whatsapp(texto, numero):
     global metaDomain
     global metaPath
 
-    global chatbotFlowMessages
     global flowStep
 
     if(("test") in (texto.lower())):
@@ -258,32 +165,32 @@ def enviar_mensajes_whatsapp(texto, numero):
             "interactive": {
                 "type": "button",
                 "body":{
-                    "text": chatbotFlowMessages[0][0]
+                    "text": "¡Hola! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊"
                 },
                 "footer":{
-                    "text": chatbotFlowMessages[0][1]
+                    "text": "Selecciona una de las opciones."
                 },
                 "action":{
                     "buttons":[
                         {
                             "type": "reply",
                             "reply":{
-                                "id": chatbotFlowMessages[0][2][0],
-                                "title": chatbotFlowMessages[0][2][1]
+                                "id": "btnOpt1",
+                                "title": "1️⃣. Quiero saber más sobre el programa"
                             }
                         },
                         {
                             "type": "reply",
                             "reply":{
-                                "id": chatbotFlowMessages[0][3][0],
-                                "title": chatbotFlowMessages[0][3][1]
+                                "id": "btnOpt2",
+                                "title": "2️⃣. Quiero hacer una solicitud"
                             }
                         },
                         {
                             "type": "reply",
                             "reply":{
-                                "id": chatbotFlowMessages[0][4][0],
-                                "title": chatbotFlowMessages[0][4][1]
+                                "id": "btnOpt3",
+                                "title": "3️⃣. Tengo otra consulta"
                             }
                         }
                     ]                    
@@ -336,4 +243,21 @@ if __name__ == '__main__':
     df = pd.DataFrame(data[1:], columns=data[0])
     df.to_excel('datos.xlsx', index=False)
     """
+    blogLastPost = []
+    conn = http.client.HTTPSConnection(blogDomain)
+    conn.request("GET", blogPath)
+    response = conn.getresponse()
+    if(response.status == 200):
+        data = response.read().decode('utf-8')
+        json_data = json.loads(data)
+        blogLastPost = json_data[0]
+    else:
+        print(f"Error en la solicitud: {response.status} {response.reason}")
+    conn.close()
+    app.logger.debug(blogLastPost)
+
+    flow0 = [
+        (blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"]),
+        blogLastPost["featured_image"]
+    ]
 # ======= ======= ======= ======= ======= ======= =======
