@@ -258,10 +258,10 @@ def enviar_mensajes_whatsapp(texto, numero):
             "interactive": {
                 "type": "button",
                 "body":{
-                    "text": "Text 1"
+                    "text": chatbotFlowMessages[0][0]
                 },
                 "footer":{
-                    "text": "Text 2"
+                    "text": chatbotFlowMessages[0][1]
                 },
                 "action":{
                     "buttons":[
