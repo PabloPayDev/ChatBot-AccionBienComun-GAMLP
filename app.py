@@ -67,7 +67,7 @@ flow0 = [
 ]
 
 flow1 = [
-    "¡Hola! Bienvenido/a al proyecto “100 jueves de Acción por el Bien Común”. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
+    "¡Hola! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
     "Selecciona una de las opciones.",
     [
         "btnOpt1",
