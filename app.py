@@ -48,23 +48,7 @@ def add_data():
     return jsonify(json_serializer(new_data)), 201
 # ======= ======= ======= ======= ======= ======= =======
 # ======= ======= TEXT TO USE ======= =======
-blogLastPost = []
 
-conn = http.client.HTTPSConnection(blogDomain)
-conn.request("GET", blogPath)
-response = conn.getresponse()
-if(response.status == 200):
-    data = response.read().decode('utf-8')
-    json_data = json.loads(data)
-    blogLastPost = json_data[0]
-else:
-    print(f"Error en la solicitud: {response.status} {response.reason}")
-conn.close()
-
-flow0 = [
-    (blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"]),
-    blogLastPost["featured_image"]
-]
 
 flow1 = [
     "¡Hola! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
@@ -335,4 +319,22 @@ if __name__ == '__main__':
     df = pd.DataFrame(data[1:], columns=data[0])
     df.to_excel('datos.xlsx', index=False)
     """
+    blogLastPost = []
+
+    conn = http.client.HTTPSConnection(blogDomain)
+    conn.request("GET", blogPath)
+    response = conn.getresponse()
+    if(response.status == 200):
+        data = response.read().decode('utf-8')
+        json_data = json.loads(data)
+        blogLastPost = json_data[0]
+        app.logger.debug(blogLastPost)
+    else:
+        print(f"Error en la solicitud: {response.status} {response.reason}")
+    conn.close()
+
+    flow0 = [
+        (blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"]),
+        blogLastPost["featured_image"]
+    ]
 # ======= ======= ======= ======= ======= ======= =======
