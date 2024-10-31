@@ -250,7 +250,7 @@ def enviar_mensajes_whatsapp(texto, numero):
         finally:
             connection.close()"""
         
-        data = data = {
+        data = {
             "messaging_product": "whatsapp",    
             "recipient_type": "individual",
             "to": numero,
@@ -258,32 +258,32 @@ def enviar_mensajes_whatsapp(texto, numero):
             "interactive": {
                 "type": "button",
                 "body":{
-                    "text": "Text 1"#chatbotFlowMessages[0][0]
+                    "text": "Text 1"
                 },
                 "footer":{
-                    "text": "Text 2"#chatbotFlowMessages[0][1]
+                    "text": "Text 2"
                 },
                 "action":{
                     "buttons":[
                         {
                             "type": "reply",
                             "reply":{
-                                "id": "Text 1",#chatbotFlowMessages[0][2][0],
-                                "title": "Text 1"#chatbotFlowMessages[0][2][1]
-                            }
-                        },
-                        {
-                            "type": "reply",
-                            "reply":{
-                                "id": "Text 1",#chatbotFlowMessages[0][2][0],
-                                "title": "Text 1"#chatbotFlowMessages[0][2][1]
-                            }
-                        },
-                        {
-                            "type": "reply",
-                            "reply":{
                                 "id": "Text 1",
                                 "title": "Text 1"
+                            }
+                        },
+                        {
+                            "type": "reply",
+                            "reply":{
+                                "id": "Text 2",
+                                "title": "Text 2"
+                            }
+                        },
+                        {
+                            "type": "reply",
+                            "reply":{
+                                "id": "Text 3",
+                                "title": "Text 3"
                             }
                         }
                     ]                    
