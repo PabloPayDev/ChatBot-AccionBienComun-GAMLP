@@ -224,7 +224,7 @@ def enviar_mensajes_whatsapp(texto, numero):
         }
     # ======= ======= ======= ENVIAR IMAGEN BLOG ======= ======= =======
     elif(("hola" in (texto.lower()))and(flowStep==0)):
-        flowStep = 1
+        """
         dataBlog = {
             "messaging_product": "whatsapp",
             "recipient_type": "individual",
@@ -248,7 +248,7 @@ def enviar_mensajes_whatsapp(texto, numero):
             addMessageLog(json.dumps(e))
         finally:
             connection.close()
-        
+        """
         data = {
             "messaging_product": "whatsapp",    
             "recipient_type": "individual",
