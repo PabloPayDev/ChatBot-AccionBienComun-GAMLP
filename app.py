@@ -196,46 +196,6 @@ def enviar_mensajes_whatsapp(texto, numero):
     global flowStep
 
     if(("test") in (texto.lower())):
-        blogLastPost = []
-
-        conn = http.client.HTTPSConnection(blogDomain)
-        conn.request("GET", blogPath)
-        response = conn.getresponse()
-        if(response.status == 200):
-            data = response.read().decode('utf-8')
-            json_data = json.loads(data)
-            blogLastPost = json_data[0]
-            data = {
-                "messaging_product": "whatsapp",
-                "recipient_type": "individual",
-                "to": numero,
-                "type": "image",
-                "image": {
-                    "link": blogLastPost["featured_image"], 
-                    "caption": "Some text"
-                }
-                    #"caption": (blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"])
-            }
-            headers = {
-                "Content-Type" : "application/json",
-                "Authorization": "Bearer "+metaToken
-            }
-
-            connection = http.client.HTTPSConnection(metaDomain)
-            try:
-                connection.request("POST", metaPath, data, headers)
-                response = connection.getresponse()
-                app.logger.debug(response.status)
-                app.logger.debug(response.reason)
-            except Exception as e:
-                app.logger.debug("Error envio mensaje")
-                #addMessageLog(json.dumps(e))
-            finally:
-                connection.close()
-        else:
-            print(f"Error en la solicitud: {response.status} {response.reason}")
-        conn.close()
-        
         data = {
             "messaging_product": "whatsapp",    
             "recipient_type": "individual",
@@ -248,31 +208,6 @@ def enviar_mensajes_whatsapp(texto, numero):
         }
     # ======= ======= ======= ENVIAR IMAGEN BLOG ======= ======= =======
     elif("hola" in (texto.lower())):
-        
-        """dataBlog = {
-            "messaging_product": "whatsapp",
-            "recipient_type": "individual",
-            "to": numero,
-            "type": "image",
-            "image": {
-                "link": "https://lapaz.bo/wp-content/uploads/2024/08/ccc0.png", 
-                "caption": "Horarios de atención  Plataformas de la ACM"
-            }
-        }
-        headersBlog = {
-            "Content-Type" : "application/json",
-            "Authorization": "Bearer "+metaToken
-        }
-        connection = http.client.HTTPSConnection(metaDomain)
-        try:
-            connection.request("POST", metaPath, dataBlog, headersBlog)
-            response = connection.getresponse()
-            print(response.status, response.reason)
-        except Exception as e:
-            addMessageLog(json.dumps(e))
-        finally:
-            connection.close()"""
-        
         data = {
             "messaging_product": "whatsapp",    
             "recipient_type": "individual",
@@ -311,6 +246,34 @@ def enviar_mensajes_whatsapp(texto, numero):
                         }
                     ]                    
                 }                
+            }
+        }
+    # ======= ======= ======= ======= ======= ======= =======
+    # ======= ======= ======= ENVIAR IMAGEN BLOG ======= ======= =======
+    elif("img" in (texto.lower())):
+        blogLastPost = []
+
+        conn = http.client.HTTPSConnection(blogDomain)
+        conn.request("GET", blogPath)
+        response = conn.getresponse()
+        if(response.status == 200):
+            data = response.read().decode('utf-8')
+            json_data = json.loads(data)
+            blogLastPost = json_data[0]
+        else:
+            print(f"Error en la solicitud: {response.status} {response.reason}")
+        conn.close()
+        app.logger.debug("======= =======")
+        app.logger.debug(blogLastPost)
+        app.logger.debug("======= =======")
+        data = {
+            "messaging_product": "whatsapp",
+            "recipient_type": "individual",
+            "to": numero,
+            "type": "image",
+            "image": {
+                "link": "https://lapaz.bo/wp-content/uploads/2024/08/ccc0.png", 
+                "caption": "Horarios de atención  Plataformas de la ACM"
             }
         }
     # ======= ======= ======= ======= ======= ======= =======
