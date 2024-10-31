@@ -196,7 +196,11 @@ def enviar_mensajes_whatsapp(texto, numero):
     global chatbotFlowMessages
     global flowStep
 
+    app.logger.debug(texto)
+    app.logger.debug(("test") in (texto.lower()))
+    # ======= ======= ======= TEST MESSAGE ======= ======= =======
     if(("test") in (texto.lower())):
+        app.logger.debug("In")
         data = {
             "messaging_product": "whatsapp",    
             "recipient_type": "individual",
@@ -207,7 +211,8 @@ def enviar_mensajes_whatsapp(texto, numero):
                 "body": "Hola, Bienvenido"
             }
         }
-    # ======= ======= ======= ENVIAR IMAGEN BLOG ======= ======= =======
+    # ======= ======= ======= ======= ======= ======= =======
+    # ======= ======= ======= SALUDO BLOG Y BUTTONS INICIALES ======= ======= =======
     elif("hola" in (texto.lower())):
         data = {
             "messaging_product": "whatsapp",    
@@ -250,6 +255,35 @@ def enviar_mensajes_whatsapp(texto, numero):
             }
         }
     # ======= ======= ======= ======= ======= ======= =======
+    # ======= ======= ======= ENVIAR IMAGEN BLOG ======= ======= =======
+    elif("img" in (texto.lower())):
+        blogLastPost = []
+
+        conn = http.client.HTTPSConnection(blogDomain)
+        conn.request("GET", blogPath)
+        response = conn.getresponse()
+        if(response.status == 200):
+            data = response.read().decode('utf-8')
+            json_data = json.loads(data)
+            blogLastPost = json_data[0]
+        else:
+            print(f"Error en la solicitud: {response.status} {response.reason}")
+        conn.close()
+        app.logger.debug("======= =======")
+        app.logger.debug(blogLastPost)
+        app.logger.debug("======= =======")
+        data = {
+            "messaging_product": "whatsapp",
+            "recipient_type": "individual",
+            "to": numero,
+            "type": "image",
+            "image": {
+                "link": "https://lapaz.bo/wp-content/uploads/2024/08/ccc0.png", 
+                "caption": "Horarios de atención  Plataformas de la ACM"
+            }
+        }
+    # ======= ======= ======= ======= ======= ======= =======
+    # ======= ======= ======= ======= ======= ======= =======
     else:
         data = {
             "messaging_product": "whatsapp",    
@@ -261,6 +295,7 @@ def enviar_mensajes_whatsapp(texto, numero):
                 "body": chatbotFlowMessages[5][0]
             }
         }
+    # ======= ======= ======= ======= ======= ======= =======
 
     data = json.dumps(data)
     headers = {
