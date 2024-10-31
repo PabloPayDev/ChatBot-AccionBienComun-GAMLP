@@ -172,32 +172,26 @@ def recibir_mensaje(req):
         objeto_mensaje = value["messages"]
 
         if(objeto_mensaje):
-            app.logger.debug('IN 1')
             messages = objeto_mensaje[0]
             if("type" in messages):
-                app.logger.debug('IN 2')
                 tipo = messages["type"]
                 #addMessage(json.dumps(messages))
 
                 if(tipo == "interactive"):
-                    app.logger.debug('IN 31')
                     tipo_interactivo = messages["interactive"]["type"]
                     if(tipo_interactivo == "button_reply"):
-                        app.logger.debug('IN 41')
                         text = messages["interactive"]["button_reply"]["id"]
                         numero = messages["from"]
 
                         enviar_mensajes_whatsapp(text, numero)
 
                     if(tipo_interactivo == "list_reply"):
-                        app.logger.debug('IN 42')
                         text = messages["interactive"]["list_reply"]["id"]
                         numero = messages["from"]
 
                         enviar_mensajes_whatsapp(text, numero)
 
                 if("text" in messages):
-                    app.logger.debug('IN 32')
                     text = messages["text"]["body"]
                     numero = messages["from"]
 
@@ -231,7 +225,7 @@ def enviar_mensajes_whatsapp(texto, numero):
         }
     # ======= ======= ======= ENVIAR IMAGEN BLOG ======= ======= =======
     elif(("hola" in (texto.lower()))and(flowStep==0)):
-        
+        """
         dataBlog = {
             "messaging_product": "whatsapp",
             "recipient_type": "individual",
@@ -255,7 +249,7 @@ def enviar_mensajes_whatsapp(texto, numero):
             addMessageLog(json.dumps(e))
         finally:
             connection.close()
-
+        """
         data = {
             "messaging_product": "whatsapp",    
             "recipient_type": "individual",
