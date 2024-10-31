@@ -228,7 +228,6 @@ def enviar_mensajes_whatsapp(texto, numero):
         }
     # ======= ======= ======= ENVIAR IMAGEN BLOG ======= ======= =======
     elif("hola" in (texto.lower())):
-        app.logger.debug("In")
         
         """dataBlog = {
             "messaging_product": "whatsapp",
@@ -280,7 +279,6 @@ def enviar_mensajes_whatsapp(texto, numero):
                 }                
             }
         }
-        app.logger.debug("data def")
     # ======= ======= ======= ======= ======= ======= =======
 
     else:
@@ -301,13 +299,12 @@ def enviar_mensajes_whatsapp(texto, numero):
         "Authorization": "Bearer "+metaToken
     }
 
-    app.logger.debug("header def")
-
     connection = http.client.HTTPSConnection(metaDomain)
     try:
         connection.request("POST", metaPath, data, headers)
         response = connection.getresponse()
-        print(response.status, response.reason)
+        app.logger.debug(response.status)
+        app.logger.debug(response.reason)
     except Exception as e:
         app.logger.debug("Error envio mensaje")
         #addMessageLog(json.dumps(e))
