@@ -55,15 +55,15 @@ flow1 = [
     "Selecciona una de las opciones.",
     [
         "btnOpt1",
-        "1️⃣. Mas informacion"
+        "1️⃣. Informacion"
     ],
     [
         "btnOpt2",
-        "2️⃣. Hacer solicitud"
+        "2️⃣. Solicitud"
     ],
     [
         "btnOpt3",
-        "3️⃣. Otra consulta"
+        "3️⃣. Consulta"
     ]
 ]
 flow2 = [
@@ -328,7 +328,9 @@ if __name__ == '__main__':
         data = response.read().decode('utf-8')
         json_data = json.loads(data)
         blogLastPost = json_data[0]
+        app.logger.debug("======= request response =======")
         app.logger.debug(blogLastPost)
+        app.logger.debug("======= ======= =======")
     else:
         print(f"Error en la solicitud: {response.status} {response.reason}")
     conn.close()
