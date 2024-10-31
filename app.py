@@ -206,6 +206,10 @@ def recibir_mensaje(req):
 flowStep = 0
 def enviar_mensajes_whatsapp(texto, numero):
     global metaToken
+    global metaDomain
+    global metaPath
+
+    global chatbotFlowMessages
     global flowStep
 
     app.logger.debug(texto)
@@ -224,7 +228,7 @@ def enviar_mensajes_whatsapp(texto, numero):
         }
     # ======= ======= ======= ENVIAR IMAGEN BLOG ======= ======= =======
     elif(("hola" in (texto.lower()))and(flowStep==0)):
-        """
+        
         dataBlog = {
             "messaging_product": "whatsapp",
             "recipient_type": "individual",
@@ -239,16 +243,16 @@ def enviar_mensajes_whatsapp(texto, numero):
             "Content-Type" : "application/json",
             "Authorization": "Bearer "+metaToken
         }
-        connection = http.client.HTTPSConnection("graph.facebook.com")
+        connection = http.client.HTTPSConnection(metaDomain)
         try:
-            connection.request("POST", "/v20.0/374877792366425/messages", dataBlog, headersBlog)
+            connection.request("POST", metaPath, dataBlog, headersBlog)
             response = connection.getresponse()
             print(response.status, response.reason)
         except Exception as e:
             addMessageLog(json.dumps(e))
         finally:
             connection.close()
-        """
+        
         data = {
             "messaging_product": "whatsapp",    
             "recipient_type": "individual",
@@ -295,9 +299,9 @@ def enviar_mensajes_whatsapp(texto, numero):
         "Authorization": "Bearer "+metaToken
     }
 
-    connection = http.client.HTTPSConnection("graph.facebook.com")
+    connection = http.client.HTTPSConnection(metaDomain)
     try:
-        connection.request("POST", "/v20.0/374877792366425/messages", data, headers)
+        connection.request("POST", metaPath, data, headers)
         response = connection.getresponse()
         print(response.status, response.reason)
     except Exception as e:
