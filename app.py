@@ -193,6 +193,7 @@ def enviar_mensajes_whatsapp(texto, numero):
     global metaDomain
     global metaPath
 
+    global chatbotFlowMessages
     global flowStep
 
     if(("test") in (texto.lower())):
@@ -277,7 +278,6 @@ def enviar_mensajes_whatsapp(texto, numero):
             }
         }
     # ======= ======= ======= ======= ======= ======= =======
-
     else:
         data = {
             "messaging_product": "whatsapp",    
