@@ -276,7 +276,7 @@ def enviar_mensajes_whatsapp(texto, numero):
                 "type": "image",
                 "image": {
                     "link": blogLastPost["featured_image"], 
-                    "caption": "Horarios de atención  Plataformas de la ACM"
+                    "caption": blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"]
                 }
             }
         else:
