@@ -246,9 +246,9 @@ def enviar_mensajes_whatsapp(texto, numero):
             "Content-Type" : "application/json",
             "Authorization": "Bearer "+metaToken
         }
-        connection = http.client.HTTPSConnection(metaDomain)
+        connection = http.client.HTTPSConnection("graph.facebook.com")
         try:
-            connection.request("POST", metaPath, dataBlog, headersBlog)
+            connection.request("POST", "/v20.0/374877792366425/messages", dataBlog, headersBlog)
             response = connection.getresponse()
             print(response.status, response.reason)
         except Exception as e:
