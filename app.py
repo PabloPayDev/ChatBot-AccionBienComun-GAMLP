@@ -268,22 +268,22 @@ def enviar_mensajes_whatsapp(texto, numero):
                         {
                             "type": "reply",
                             "reply":{
-                                "id": "Text 1",
-                                "title": "Text 1"
+                                "id": chatbotFlowMessages[0][2][0],
+                                "title": chatbotFlowMessages[0][2][1]
                             }
                         },
                         {
                             "type": "reply",
                             "reply":{
-                                "id": "Text 2",
-                                "title": "Text 2"
+                                "id": chatbotFlowMessages[0][3][0],
+                                "title": chatbotFlowMessages[0][3][1]
                             }
                         },
                         {
                             "type": "reply",
                             "reply":{
-                                "id": "Text 3",
-                                "title": "Text 3"
+                                "id": chatbotFlowMessages[0][4][0],
+                                "title": chatbotFlowMessages[0][4][1]
                             }
                         }
                     ]                    
