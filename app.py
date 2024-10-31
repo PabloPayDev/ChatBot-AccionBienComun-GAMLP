@@ -217,26 +217,10 @@ def enviar_mensajes_whatsapp(texto, numero):
             "messaging_product": "whatsapp",    
             "recipient_type": "individual",
             "to": numero,
-            "type": "interactive",
-            "interactive": {
-                "type": "button",
-                "body":{
-                    "text": chatbotFlowMessages[0][0]
-                },
-                "footer":{
-                    "text": chatbotFlowMessages[0][1]
-                },
-                "action":{
-                    "buttons":[
-                        {
-                            "type": "reply",
-                            "reply":{
-                                "id": chatbotFlowMessages[0][2][0],
-                                "title": chatbotFlowMessages[0][2][1]
-                            }
-                        }
-                    ]                    
-                }                
+            "type": "text",
+            "text": {
+                "preview_url": False,
+                "body": "Hola, Bienvenido"
             }
         }
     # ======= ======= ======= ENVIAR IMAGEN BLOG ======= ======= =======
@@ -267,29 +251,37 @@ def enviar_mensajes_whatsapp(texto, numero):
             connection.close()"""
         
         data = {
-            "messaging_product": "whatsapp",    
-            "recipient_type": "individual",
+            "messaging_product": "whatsapp",
             "to": numero,
             "type": "interactive",
-            "interactive": {
-                "type": "button",
-                "body":{
-                    "text": chatbotFlowMessages[0][0]
+            "interactive":{
+                "type" : "list",
+                "body": {
+                    "text": chatbotFlowMessages[1][0]
                 },
-                "footer":{
-                    "text": chatbotFlowMessages[0][1]
+                "footer": {
+                    "text": chatbotFlowMessages[1][2]
                 },
                 "action":{
-                    "buttons":[
+                    "button": chatbotFlowMessages[1][1],
+                    "sections":[
                         {
-                            "type": "reply",
-                            "reply":{
-                                "id": chatbotFlowMessages[0][2][0],
-                                "title": chatbotFlowMessages[0][2][1]
-                            }
+                            "title": "",
+                            "rows":[
+                                {
+                                    "id": chatbotFlowMessages[1][3][0],
+                                    "title" : chatbotFlowMessages[1][3][1],
+                                    "description": "Compra los mejores articulos de tecnologia"
+                                },
+                                {
+                                    "id": chatbotFlowMessages[1][4][0],
+                                    "title" : chatbotFlowMessages[1][4][1],
+                                    "description": "Vende lo que ya no estes usando"
+                                }
+                            ]
                         }
-                    ]                    
-                }                
+                    ]
+                }
             }
         }
     # ======= ======= ======= ======= ======= ======= =======
