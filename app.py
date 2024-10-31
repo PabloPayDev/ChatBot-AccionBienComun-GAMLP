@@ -258,32 +258,32 @@ def enviar_mensajes_whatsapp(texto, numero):
             "interactive": {
                 "type": "button",
                 "body":{
-                    "text": chatbotFlowMessages[0][0]
+                    "text": "Text 1"#chatbotFlowMessages[0][0]
                 },
                 "footer":{
-                    "text": chatbotFlowMessages[0][1]
+                    "text": "Text 2"#chatbotFlowMessages[0][1]
                 },
                 "action":{
                     "buttons":[
                         {
                             "type": "reply",
                             "reply":{
-                                "id": chatbotFlowMessages[0][2][0],
-                                "title": chatbotFlowMessages[0][2][1]
+                                "id": "Text 1"#chatbotFlowMessages[0][2][0],
+                                "title": "Text 1"#chatbotFlowMessages[0][2][1]
                             }
                         },
                         {
                             "type": "reply",
                             "reply":{
-                                "id": chatbotFlowMessages[0][2][0],
-                                "title": chatbotFlowMessages[0][2][1]
+                                "id": "Text 1"#chatbotFlowMessages[0][2][0],
+                                "title": "Text 1"#chatbotFlowMessages[0][2][1]
                             }
                         },
                         {
                             "type": "reply",
                             "reply":{
-                                "id": chatbotFlowMessages[0][2][0],
-                                "title": chatbotFlowMessages[0][2][1]
+                                "id": "Text 1"#chatbotFlowMessages[0][2][0],
+                                "title": "Text 1"#chatbotFlowMessages[0][2][1]
                             }
                         }
                     ]                    
