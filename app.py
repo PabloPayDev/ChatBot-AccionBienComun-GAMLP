@@ -215,8 +215,9 @@ def enviar_mensajes_whatsapp(texto, numero):
             "type": "image",
             "image": {
                 "link": blogLastPost["featured_image"], 
-                "caption": (blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"])
+                "caption": "Some text"
             }
+                #"caption": (blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"])
         }
         headers = {
             "Content-Type" : "application/json",
@@ -336,8 +337,6 @@ def enviar_mensajes_whatsapp(texto, numero):
     try:
         connection.request("POST", metaPath, data, headers)
         response = connection.getresponse()
-        app.logger.debug(response.status)
-        app.logger.debug(response.reason)
     except Exception as e:
         app.logger.debug("Error envio mensaje")
         #addMessageLog(json.dumps(e))
