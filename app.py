@@ -212,18 +212,31 @@ def enviar_mensajes_whatsapp(texto, numero):
     global chatbotFlowMessages
     global flowStep
 
-    app.logger.debug(texto)
-    app.logger.debug(flowStep)
-
     if(("test") in (texto.lower())):
         data = {
             "messaging_product": "whatsapp",    
             "recipient_type": "individual",
             "to": numero,
-            "type": "text",
-            "text": {
-                "preview_url": False,
-                "body": "Hola, Bienvenido"
+            "type": "interactive",
+            "interactive": {
+                "type": "button",
+                "body":{
+                    "text": chatbotFlowMessages[0][0]
+                },
+                "footer":{
+                    "text": chatbotFlowMessages[0][1]
+                },
+                "action":{
+                    "buttons":[
+                        {
+                            "type": "reply",
+                            "reply":{
+                                "id": chatbotFlowMessages[0][2][0],
+                                "title": chatbotFlowMessages[0][2][1]
+                            }
+                        }
+                    ]                    
+                }                
             }
         }
     # ======= ======= ======= ENVIAR IMAGEN BLOG ======= ======= =======
