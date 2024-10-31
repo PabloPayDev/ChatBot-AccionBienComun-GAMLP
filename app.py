@@ -227,9 +227,10 @@ def enviar_mensajes_whatsapp(texto, numero):
             }
         }
     # ======= ======= ======= ENVIAR IMAGEN BLOG ======= ======= =======
-    elif(("hola" in (texto.lower()))and(flowStep==0)):
+    elif("hola" in (texto.lower())):
+        app.logger.debug("In")
         
-        dataBlog = {
+        """dataBlog = {
             "messaging_product": "whatsapp",
             "recipient_type": "individual",
             "to": numero,
@@ -251,7 +252,7 @@ def enviar_mensajes_whatsapp(texto, numero):
         except Exception as e:
             addMessageLog(json.dumps(e))
         finally:
-            connection.close()
+            connection.close()"""
         
         data = {
             "messaging_product": "whatsapp",    
@@ -279,6 +280,7 @@ def enviar_mensajes_whatsapp(texto, numero):
                 }                
             }
         }
+        app.logger.debug("data def")
     # ======= ======= ======= ======= ======= ======= =======
 
     else:
@@ -299,13 +301,16 @@ def enviar_mensajes_whatsapp(texto, numero):
         "Authorization": "Bearer "+metaToken
     }
 
+    app.logger.debug("header def")
+
     connection = http.client.HTTPSConnection(metaDomain)
     try:
         connection.request("POST", metaPath, data, headers)
         response = connection.getresponse()
         print(response.status, response.reason)
     except Exception as e:
-        addMessageLog(json.dumps(e))
+        app.logger.debug("Error envio mensaje")
+        #addMessageLog(json.dumps(e))
     finally:
         connection.close()
 # ======= ======= ======= ======= ======= ======= =======
