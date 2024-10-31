@@ -232,7 +232,6 @@ def enviar_mensajes_whatsapp(texto, numero):
             "to": numero,
             "type": "image",
             "image": {
-                "id" : "img1", 
                 "link": "https://lapaz.bo/wp-content/uploads/2024/08/ccc0.png", 
                 "caption": "Horarios de atención  Plataformas de la ACM"
             }
