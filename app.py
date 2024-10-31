@@ -196,6 +196,27 @@ def enviar_mensajes_whatsapp(texto, numero):
     global flowStep
 
     if(("test") in (texto.lower())):
+        blogLastPost = []
+
+        conn = http.client.HTTPSConnection(blogDomain)
+        conn.request("GET", blogPath)
+        response = conn.getresponse()
+        if(response.status == 200):
+            data = response.read().decode('utf-8')
+            json_data = json.loads(data)
+            blogLastPost = json_data[0]
+            app.logger.debug("======= request response =======")
+            app.logger.debug(blogLastPost)
+            app.logger.debug("======= ======= =======")
+        else:
+            print(f"Error en la solicitud: {response.status} {response.reason}")
+        conn.close()
+
+        flow0 = [
+            (blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"]),
+            blogLastPost["featured_image"]
+        ]
+        
         data = {
             "messaging_product": "whatsapp",    
             "recipient_type": "individual",
@@ -241,32 +262,32 @@ def enviar_mensajes_whatsapp(texto, numero):
             "interactive": {
                 "type": "button",
                 "body":{
-                    "text": "¡Hola! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊"
+                    "text": chatbotFlowMessages[0][0]
                 },
                 "footer":{
-                    "text": "Selecciona una de las opciones."
+                    "text": chatbotFlowMessages[0][1]
                 },
                 "action":{
                     "buttons":[
                         {
                             "type": "reply",
                             "reply":{
-                                "id": "btnOpt1",
-                                "title": "1️⃣. Quiero saber más sobre el programa"
+                                "id": chatbotFlowMessages[0][2][0],
+                                "title": chatbotFlowMessages[0][2][1]
                             }
                         },
                         {
                             "type": "reply",
                             "reply":{
-                                "id": "btnOpt2",
-                                "title": "2️⃣. Quiero hacer una solicitud"
+                                "id": chatbotFlowMessages[0][3][0],
+                                "title": chatbotFlowMessages[0][3][1]
                             }
                         },
                         {
                             "type": "reply",
                             "reply":{
-                                "id": "btnOpt3",
-                                "title": "3️⃣. Tengo otra consulta"
+                                "id": chatbotFlowMessages[0][4][0],
+                                "title": chatbotFlowMessages[0][4][1]
                             }
                         }
                     ]                    
@@ -319,24 +340,4 @@ if __name__ == '__main__':
     df = pd.DataFrame(data[1:], columns=data[0])
     df.to_excel('datos.xlsx', index=False)
     """
-    blogLastPost = []
-
-    conn = http.client.HTTPSConnection(blogDomain)
-    conn.request("GET", blogPath)
-    response = conn.getresponse()
-    if(response.status == 200):
-        data = response.read().decode('utf-8')
-        json_data = json.loads(data)
-        blogLastPost = json_data[0]
-        app.logger.debug("======= request response =======")
-        app.logger.debug(blogLastPost)
-        app.logger.debug("======= ======= =======")
-    else:
-        print(f"Error en la solicitud: {response.status} {response.reason}")
-    conn.close()
-
-    flow0 = [
-        (blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"]),
-        blogLastPost["featured_image"]
-    ]
 # ======= ======= ======= ======= ======= ======= =======
