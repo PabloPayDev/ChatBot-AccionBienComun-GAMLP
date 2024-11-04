@@ -351,7 +351,7 @@ def enviar_mensajes_whatsapp(texto, numero):
                         "Content-Type" : "application/json",
                         "Authorization": "Bearer "+gamlpToken
                     }
-                    data = json.dumps(data)
+                    dataGetCiudadano = json.dumps(dataGetCiudadano)
                     connection.request("POST", gamlpPathGetCiudadano, dataGetCiudadano, headers)
                     response = connection.getresponse()
                     if(response.status == 200):
