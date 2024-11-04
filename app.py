@@ -319,6 +319,7 @@ def enviar_mensajes_whatsapp(texto, numero):
     # ======= ======= ======= ======= =======
     # ======= ======= ENVIAR IMAGEN BLOG ======= =======
     elif("next" in (texto.lower())):
+        app.logger.debug('IN')
         data = {
             "usuario": gamlpUser,
             "clave": gamlpPass
@@ -332,9 +333,11 @@ def enviar_mensajes_whatsapp(texto, numero):
             connection.request("POST", gamlpPathGetToken, data, headers)
             response = connection.getresponse()
             if(response.status == 200):
+                app.logger.debug('IN get token')
                 data = response.read().decode('utf-8')
                 json_data = json.loads(data)
                 gamlpToken = json_data["token"]
+                app.logger.debug(gamlpToken)
 
                 nombres = "Default"
 
@@ -349,13 +352,16 @@ def enviar_mensajes_whatsapp(texto, numero):
                     connection.request("POST", gamlpPathGetCiudadano, dataGetCiudadano, headers)
                     response = connection.getresponse()
                     if(response.status == 200):
+                        app.logger.debug('IN get ciudadano')
                         data = response.read().decode('utf-8')
                         json_data = json.loads(data)
                         nombres = json_data["nombres"]+json_data["paterno"]+json_data["materno"]
+                        app.logger.debug(nombres)
 
                 except Exception as e:
                     app.logger.debug("Error envio mensaje")
         
+                app.logger.debug("PREP MESSAGE")
                 data = {
                     "messaging_product": "whatsapp",    
                     "recipient_type": "individual",
