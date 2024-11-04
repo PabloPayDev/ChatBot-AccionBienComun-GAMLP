@@ -357,7 +357,9 @@ def enviar_mensajes_whatsapp(texto, numero):
                     if(response.status == 200):
                         app.logger.debug('IN get ciudadano')
                         data = response.read().decode('utf-8')
+                        app.logger.debug(data)
                         json_data = json.loads(data)
+                        app.logger.debug(json_data)
                         nombres = json_data["nombres"]+json_data["paterno"]+json_data["materno"]
                         app.logger.debug(nombres)
         
