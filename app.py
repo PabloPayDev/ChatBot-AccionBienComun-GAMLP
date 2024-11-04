@@ -196,8 +196,7 @@ def enviar_mensajes_whatsapp(texto, numero):
     global chatbotFlowMessages
     global flowStep
 
-    app.logger.debug(texto)
-    app.logger.debug(("test") in (texto.lower()))
+    dataList = []
     # ======= ======= ======= TEST MESSAGE ======= ======= =======
     if(("test") in (texto.lower())):
         app.logger.debug("In")
@@ -211,6 +210,7 @@ def enviar_mensajes_whatsapp(texto, numero):
                 "body": "Hola, Bienvenido"
             }
         }
+        dataList.append(data)
     # ======= ======= ======= ======= ======= ======= =======
     # ======= ======= ======= SALUDO BLOG Y BUTTONS INICIALES ======= ======= =======
     elif("hola" in (texto.lower())):
@@ -254,6 +254,8 @@ def enviar_mensajes_whatsapp(texto, numero):
                 }                
             }
         }
+        dataList.append(data)
+
     # ======= ======= ======= ======= ======= ======= =======
     # ======= ======= ======= ENVIAR IMAGEN BLOG ======= ======= =======
     elif("img" in (texto.lower())):
@@ -279,6 +281,7 @@ def enviar_mensajes_whatsapp(texto, numero):
                     "caption": blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"]
                 }
             }
+            dataList.append(data)
         else:
             print(f"Error en la solicitud: {response.status} {response.reason}")
         conn.close()
@@ -295,23 +298,26 @@ def enviar_mensajes_whatsapp(texto, numero):
                 "body": chatbotFlowMessages[5][0]
             }
         }
+        dataList.append(data)
+
     # ======= ======= ======= ======= ======= ======= =======
 
-    data = json.dumps(data)
-    headers = {
-        "Content-Type" : "application/json",
-        "Authorization": "Bearer "+metaToken
-    }
+    for dataItem in dataList:
+        dataItem = json.dumps(dataItem)
+        headers = {
+            "Content-Type" : "application/json",
+            "Authorization": "Bearer "+metaToken
+        }
 
-    connection = http.client.HTTPSConnection(metaDomain)
-    try:
-        connection.request("POST", metaPath, data, headers)
-        response = connection.getresponse()
-    except Exception as e:
-        app.logger.debug("Error envio mensaje")
-        #addMessageLog(json.dumps(e))
-    finally:
-        connection.close()
+        connection = http.client.HTTPSConnection(metaDomain)
+        try:
+            connection.request("POST", metaPath, dataItem, headers)
+            response = connection.getresponse()
+        except Exception as e:
+            app.logger.debug("Error envio mensaje")
+            #addMessageLog(json.dumps(e))
+        finally:
+            connection.close()
 # ======= ======= ======= ======= ======= ======= =======
 # ======= ======= ======= APP INIT SECTION ======= ======= =======
 if __name__ == '__main__':
