@@ -12,7 +12,7 @@ app = Flask(__name__)
 client = MongoClient('mongodb://localhost:27017/')
 db = client['meta_db_100J']
 
-metaToken = "EAAWXJp8ZCZCyABOzTX40dJPAZCMBKZBhNnWzmf1LaM8DtgYdZC11A6ZCmbrPjb4gmy7NEX6ffZAYg5qT6hD4ZCKUifyGr1ZCT12ZBpKwbSAzYc51ehuapRLIh69i92ObOtZCBdMVXYnbtjjJ6lVhui3w3WLpamlCjfjZB1S9w2datcba2Fst0PSWFUiLCfN0KZCzxyToCHUiwVr8DjJZAsRrgflELgbK7S"
+metaToken = "EAAWXJp8ZCZCyABO2BvgpsJqZBzM7ZBcweJvYOW9lLnsfNrXcZBSTLNux2jeBwowyMepDw0ZA1EDEAGYc1v5lBic1EFJD1W34FN0IAaXcuK984nkEjkflnFw9MHceWRolYp3VxKrqD5K17zYjVHrrmZBfEpVTVDi8k0wg39ysmm5Lr1LtwYgxNs0oVkZCXhaoc3OeoQ7ZB1EMcJyzGUot3iAjZAOiMV"
 webhookToken = "CHATBOTTOKENTEST"
 
 metaDomain = "graph.facebook.com"
@@ -323,10 +323,13 @@ def enviar_mensajes_whatsapp(texto, numero):
             "usuario": gamlpUser,
             "clave": gamlpPass
         }
+        headers = {
+            "Content-Type" : "application/json"
+        }
         data = json.dumps(data)
         connection = http.client.HTTPSConnection(gamlpDomain)
         try:
-            connection.request("POST", gamlpPathGetToken, data)
+            connection.request("POST", gamlpPathGetToken, data, headers)
             response = connection.getresponse()
             if(response.status == 200):
                 data = response.read().decode('utf-8')
