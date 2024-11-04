@@ -4,6 +4,7 @@ from bson import ObjectId
 import pandas as pd
 from datetime import datetime
 import http.client
+import ssl
 import json
 import logging
 
@@ -329,7 +330,7 @@ def enviar_mensajes_whatsapp(texto, numero):
             "Content-Type" : "application/json"
         }
         data = json.dumps(data)
-        connection = http.client.HTTPSConnection(gamlpDomain, gamlpPort)
+        connection = http.client.HTTPConnection(gamlpDomain, gamlpPort)
         try:
             connection.request("POST", gamlpPathGetToken, data, headers)
             response = connection.getresponse()
