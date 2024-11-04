@@ -21,6 +21,13 @@ metaPath = "/v20.0/374877792366425/messages"
 blogDomain = "lapaz.bo"
 blogPath = "/wp-json/catastroPlugin/v1/posts-categoria/catastroChatbot"
 
+gamlpDomain = "131.0.0.17:8008"
+gamlpPathGetToken = "/wsPC/obtTokenGamlp"
+gamlpPathGetCiudadano = "/wsPC/obtCiudadano"
+gamlpUser = "gamlpforo"
+gamlpPass = "g4m4lpf0r0of2022"
+gamlpToken = ""
+
 logging.basicConfig(level=logging.DEBUG)
 app.logger.setLevel(logging.DEBUG)
 
@@ -262,79 +269,109 @@ def enviar_mensajes_whatsapp(texto, numero):
                 }
             }
             dataList.append(data)
-            # ======= MENU SECTION =======
-            data = {
-                "messaging_product": "whatsapp",    
-                "recipient_type": "individual",
-                "to": numero,
-                "type": "interactive",
-                "interactive": {
-                    "type": "button",
-                    "body":{
-                        "text": chatbotFlowMessages[0][0]
-                    },
-                    "footer":{
-                        "text": chatbotFlowMessages[0][1]
-                    },
-                    "action":{
-                        "buttons":[
-                            {
-                                "type": "reply",
-                                "reply":{
-                                    "id": chatbotFlowMessages[0][2][0],
-                                    "title": chatbotFlowMessages[0][2][1]
-                                }
-                            },
-                            {
-                                "type": "reply",
-                                "reply":{
-                                    "id": chatbotFlowMessages[0][3][0],
-                                    "title": chatbotFlowMessages[0][3][1]
-                                }
-                            },
-                            {
-                                "type": "reply",
-                                "reply":{
-                                    "id": chatbotFlowMessages[0][4][0],
-                                    "title": chatbotFlowMessages[0][4][1]
-                                }
-                            }
-                        ]                    
-                    }                
-                }
-            }
-            dataList.append(data)
-            # ======= ======= =======
         else:
             print(f"Error en la solicitud: {response.status} {response.reason}")
         conn.close()
         # ======= ======= =======
+        # ======= MENU SECTION =======
+        data = {
+            "messaging_product": "whatsapp",    
+            "recipient_type": "individual",
+            "to": numero,
+            "type": "interactive",
+            "interactive": {
+                "type": "button",
+                "body":{
+                    "text": chatbotFlowMessages[0][0]
+                },
+                "footer":{
+                    "text": chatbotFlowMessages[0][1]
+                },
+                "action":{
+                    "buttons":[
+                        {
+                            "type": "reply",
+                            "reply":{
+                                "id": chatbotFlowMessages[0][2][0],
+                                "title": chatbotFlowMessages[0][2][1]
+                            }
+                        },
+                        {
+                            "type": "reply",
+                            "reply":{
+                                "id": chatbotFlowMessages[0][3][0],
+                                "title": chatbotFlowMessages[0][3][1]
+                            }
+                        },
+                        {
+                            "type": "reply",
+                            "reply":{
+                                "id": chatbotFlowMessages[0][4][0],
+                                "title": chatbotFlowMessages[0][4][1]
+                            }
+                        }
+                    ]                    
+                }                
+            }
+        }
+        dataList.append(data)
+        # ======= ======= =======
     # ======= ======= ======= ======= =======
     # ======= ======= ENVIAR IMAGEN BLOG ======= =======
-    elif("img" in (texto.lower())):
-        blogLastPost = []
+    elif("next" in (texto.lower())):
+        data = {
+            "usuario": gamlpUser,
+            "clave": gamlpPass
+        }
+        data = json.dumps(data)
+        connection = http.client.HTTPSConnection(gamlpDomain)
+        try:
+            connection.request("POST", gamlpPathGetToken, data)
+            response = connection.getresponse()
+            if(response.status == 200):
+                data = response.read().decode('utf-8')
+                json_data = json.loads(data)
+                gamlpToken = json_data["token"]
 
-        conn = http.client.HTTPSConnection(blogDomain)
-        conn.request("GET", blogPath)
-        response = conn.getresponse()
-        if(response.status == 200):
-            data = response.read().decode('utf-8')
-            json_data = json.loads(data)
-            blogLastPost = json_data[0]
-            data = {
-                "messaging_product": "whatsapp",
-                "recipient_type": "individual",
-                "to": numero,
-                "type": "image",
-                "image": {
-                    "link": blogLastPost["featured_image"], 
-                    "caption": blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"]
+                nombres = "Default"
+
+                try:
+                    dataGetCiudadano = {
+                        "ci": "6834512"
+                    }
+                    headers = {
+                        "Content-Type" : "application/json",
+                        "Authorization": "Bearer "+gamlpToken
+                    }
+                    connection.request("POST", gamlpPathGetCiudadano, dataGetCiudadano, headers)
+                    response = connection.getresponse()
+                    if(response.status == 200):
+                        data = response.read().decode('utf-8')
+                        json_data = json.loads(data)
+                        nombres = json_data["nombres"]+json_data["paterno"]+json_data["materno"]
+
+                except Exception as e:
+                    app.logger.debug("Error envio mensaje")
+        
+                data = {
+                    "messaging_product": "whatsapp",    
+                    "recipient_type": "individual",
+                    "to": numero,
+                    "type": "text",
+                    "text": {
+                        "preview_url": False,
+                        "body": nombres
+                    }
                 }
-            }
-            dataList.append(data)
-        else:
-            print(f"Error en la solicitud: {response.status} {response.reason}")
-        conn.close()
+                dataList.append(data)
+                
+            else:
+                print(f"Error en la solicitud: {response.status} {response.reason}")
+        except Exception as e:
+            app.logger.debug("Error envio mensaje")
+            #addMessageLog(json.dumps(e))
+        finally:
+            connection.close()
     # ======= ======= ======= ======= =======
     # ======= ======= ======= ======= =======
     else:
