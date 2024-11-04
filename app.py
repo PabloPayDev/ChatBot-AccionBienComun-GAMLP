@@ -21,7 +21,8 @@ metaPath = "/v20.0/374877792366425/messages"
 blogDomain = "lapaz.bo"
 blogPath = "/wp-json/catastroPlugin/v1/posts-categoria/catastroChatbot"
 
-gamlpDomain = "131.0.0.17:8008"
+gamlpDomain = "131.0.0.17"
+gamlpPort = 8008
 gamlpPathGetToken = "/wsPC/obtTokenGamlp"
 gamlpPathGetCiudadano = "/wsPC/obtCiudadano"
 gamlpUser = "gamlpforo"
@@ -328,7 +329,7 @@ def enviar_mensajes_whatsapp(texto, numero):
             "Content-Type" : "application/json"
         }
         data = json.dumps(data)
-        connection = http.client.HTTPSConnection(gamlpDomain)
+        connection = http.client.HTTPSConnection(gamlpDomain, gamlpPort)
         try:
             connection.request("POST", gamlpPathGetToken, data, headers)
             response = connection.getresponse()
