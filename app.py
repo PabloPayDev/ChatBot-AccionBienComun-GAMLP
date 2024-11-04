@@ -360,23 +360,22 @@ def enviar_mensajes_whatsapp(texto, numero):
                         json_data = json.loads(data)
                         nombres = json_data["nombres"]+json_data["paterno"]+json_data["materno"]
                         app.logger.debug(nombres)
+        
+                        app.logger.debug("PREP MESSAGE")
+                        data = {
+                            "messaging_product": "whatsapp",    
+                            "recipient_type": "individual",
+                            "to": numero,
+                            "type": "text",
+                            "text": {
+                                "preview_url": False,
+                                "body": nombres
+                            }
+                        }
+                        dataList.append(data)
 
                 except Exception as e:
                     app.logger.debug("Error envio mensaje")
-        
-                app.logger.debug("PREP MESSAGE")
-                data = {
-                    "messaging_product": "whatsapp",    
-                    "recipient_type": "individual",
-                    "to": numero,
-                    "type": "text",
-                    "text": {
-                        "preview_url": False,
-                        "body": nombres
-                    }
-                }
-                dataList.append(data)
-                
             else:
                 print(f"Error en la solicitud: {response.status} {response.reason}")
         except Exception as e:
