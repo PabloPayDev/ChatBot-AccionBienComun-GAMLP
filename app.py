@@ -214,6 +214,35 @@ def enviar_mensajes_whatsapp(texto, numero):
     # ======= ======= ======= ======= ======= ======= =======
     # ======= ======= ======= SALUDO BLOG Y BUTTONS INICIALES ======= ======= =======
     elif("hola" in (texto.lower())):
+        # ======= ======= BLOG IMG SECTION ======= =======
+        blogLastPost = []
+
+        conn = http.client.HTTPSConnection(blogDomain)
+        conn.request("GET", blogPath)
+        response = conn.getresponse()
+        if(response.status == 200):
+            data = response.read().decode('utf-8')
+            json_data = json.loads(data)
+            blogLastPost = json_data[0]
+            app.logger.debug("======= =======")
+            app.logger.debug(blogLastPost)
+            app.logger.debug("======= =======")
+            data = {
+                "messaging_product": "whatsapp",
+                "recipient_type": "individual",
+                "to": numero,
+                "type": "image",
+                "image": {
+                    "link": blogLastPost["featured_image"], 
+                    "caption": blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"]
+                }
+            }
+            dataList.append(data)
+        else:
+            print(f"Error en la solicitud: {response.status} {response.reason}")
+        conn.close()
+        # ======= ======= ======= ======= =======
+        # ======= ======= MENU SECTION ======= =======
         data = {
             "messaging_product": "whatsapp",    
             "recipient_type": "individual",
@@ -255,7 +284,7 @@ def enviar_mensajes_whatsapp(texto, numero):
             }
         }
         dataList.append(data)
-
+        # ======= ======= ======= ======= =======
     # ======= ======= ======= ======= ======= ======= =======
     # ======= ======= ======= ENVIAR IMAGEN BLOG ======= ======= =======
     elif("img" in (texto.lower())):
