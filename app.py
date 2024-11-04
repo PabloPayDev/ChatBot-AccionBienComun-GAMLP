@@ -57,8 +57,6 @@ def add_data():
     return jsonify(json_serializer(new_data)), 201
 # ======= ======= ======= ======= ======= ======= =======
 # ======= ======= TEXT TO USE ======= =======
-
-
 flow1 = [
     "¡Hola! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
     "Selecciona una de las opciones.",
@@ -135,6 +133,117 @@ chatbotFlowMessages = [
     flow5,
     flowInvalid
 ]
+
+messageProcessing = [
+    "⏰. Procesando..."
+]
+messageInvalid = [
+    "Su respuesta no es valida, porfavor ingrese lo que se especifica."
+]
+message001 = [
+    "¡Hola! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
+    "Selecciona una de las opciones.",
+    [
+        "btnOpt1",
+        "1️⃣. Informacion"
+    ],
+    [
+        "btnOpt2",
+        "2️⃣. Solicitud"
+    ],
+    [
+        "btnOpt3",
+        "3️⃣. Consulta"
+    ]
+]
+message002 = [
+    "El programa ‘100 Jueves de Acción por el Bien Común’ busca mejorar los espacios públicos a través de acciones como deshierbe, limpieza de aceras y cunetas. ¡Participa haciendo una solicitud!",
+    "¿Te gustaría hacer una solicitud para mejorar tu entorno?",
+    "Selecciona una de las opciones.",
+    [
+        "btnOpt1",
+        "1️⃣. Hacer solicitud"
+    ],
+    [
+        "btnOpt2",
+        "2️⃣. No, gracias."
+    ],
+    [
+        "btnOpt3",
+        "3️⃣. Otra Consulta"
+    ]
+]
+message003 = [
+    "Gracias por tu interés en los '100 Jueves de Acción por el Bien Común'. ¡Hasta pronto!"
+]
+message004 = [
+    "Para consultas generales, por favor, comunícate con nuestra línea gratuita al 155. ¡Estamos para ayudarte!"
+]
+message005 = [
+    "Por favor, ingresa tu Cédula de Identidad (C.I.) para continuar."
+]
+message006 = [
+    "Por favor ingresa un Cédula de Identidad (C.I.) valido y sin extension."
+]
+message007 = [
+    "¡Gracias! Ahora, elige una de las siguientes acciones para llevar a cabo",
+    "Selecciona una de las opciones.",
+    [
+        "btnOpt1",
+        "1️⃣. Deshierbe"
+    ],
+    [
+        "btnOpt2",
+        "2️⃣. Limp. Aceras"
+    ],
+    [
+        "btnOpt3",
+        "3️⃣. Limp. Cunetas"
+    ]
+]
+message008 = [
+    "¡Genial, deshierbar es una excelente manera de embellecer nuestra comunidad!"
+]
+message009 = [
+    "¡Perfecto, mantener las aceras limpias es crucial para una ciudad segura y acogedora!"
+]
+message010 = [
+    "¡Excelente, limpiar las cunetas ayuda a prevenir inundaciones y a mantener nuestras calles en buen estado!"
+]
+message011 = [
+    "¿Dónde te gustaría que realizáramos esta acción? Por favor, describe la ubicación del lugar con la mayor precisión posible (por ejemplo, Zona y calle/avenida.)"
+]
+message012 = [
+    "Si tienes alguna fotografía o video del lugar, sería genial que los compartas con nosotros para que podamos entender mejor la situación.",
+    "Selecciona una de las opciones.",
+    [
+        "btnOpt1",
+        "1️⃣. Enviar Foto/Video"
+    ],
+    [
+        "btnOpt2",
+        "2️⃣. No enviar"
+    ]
+]
+
+
+# SAME CODES 12=111, 
+chatbotMessages = {
+    "processing": messageProcessing,
+    "invalid": messageInvalid,
+    "1": message001,
+    "11": message002,
+    "112": message003,
+    "113": message004,
+    "12": message005,
+    "1211": message007,
+    "12111": message008,
+    "12112": message009,
+    "12113": message010,
+    "121111": message011,
+    "1211111": message012,
+    "122": message006,
+}
 # ======= ======= ======= ======= =======
 # ======= ======= ======= SOME FUNCTIONS SECTION ======= ======= =======
 def json_serializer(data):
@@ -319,8 +428,8 @@ def enviar_mensajes_whatsapp(texto, numero):
         dataList.append(data)
         # ======= ======= =======
     # ======= ======= ======= ======= =======
-    # ======= ======= ENVIAR IMAGEN BLOG ======= =======
-    elif("next" in (texto.lower())):
+    # ======= ======= RECUPERAR CIUDADANO INFO SECTION ======= =======
+    elif("consulta" in (texto.lower())):
         app.logger.debug('IN')
         data = {
             "usuario": gamlpUser,
