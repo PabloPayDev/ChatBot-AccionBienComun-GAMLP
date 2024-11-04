@@ -350,6 +350,7 @@ def enviar_mensajes_whatsapp(texto, numero):
                         "Content-Type" : "application/json",
                         "Authorization": "Bearer "+gamlpToken
                     }
+                    data = json.dumps(data)
                     connection.request("POST", gamlpPathGetCiudadano, dataGetCiudadano, headers)
                     response = connection.getresponse()
                     if(response.status == 200):
@@ -378,7 +379,7 @@ def enviar_mensajes_whatsapp(texto, numero):
             else:
                 print(f"Error en la solicitud: {response.status} {response.reason}")
         except Exception as e:
-            app.logger.debug("Error envio mensaje")
+            app.logger.error(f"Error en el envío de mensaje: {str(e)}")
             #addMessageLog(json.dumps(e))
         finally:
             connection.close()
@@ -411,7 +412,7 @@ def enviar_mensajes_whatsapp(texto, numero):
             connection.request("POST", metaPath, dataItem, headers)
             response = connection.getresponse()
         except Exception as e:
-            app.logger.debug("Error envio mensaje")
+            app.logger.error(f"Error en el envío de mensaje: {str(e)}")
             #addMessageLog(json.dumps(e))
         finally:
             connection.close()
