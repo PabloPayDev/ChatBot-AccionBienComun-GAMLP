@@ -187,6 +187,7 @@ def recibir_mensaje(req):
         app.logger.debug('Error: Recibir mensaje')
         return jsonify({'message':'EVENT RECEIVED'})
     
+# ======= ======= ======= SEND MESSAGE FUNCTION ======= ======= =======
 flowStep = 0
 def enviar_mensajes_whatsapp(texto, numero):
     global metaToken
@@ -197,7 +198,34 @@ def enviar_mensajes_whatsapp(texto, numero):
     global flowStep
 
     dataList = []
-    # ======= ======= ======= TEST MESSAGE ======= ======= =======
+
+    # ======= ======= PROCESSING MESSAGE ======= =======
+    data = {
+        "messaging_product": "whatsapp",    
+        "recipient_type": "individual",
+        "to": numero,
+        "type": "text",
+        "text": {
+            "preview_url": False,
+            "body": "⏰. Procesando..."
+        }
+    }
+    data = json.dumps(data)
+    headers = {
+        "Content-Type" : "application/json",
+        "Authorization": "Bearer "+metaToken
+    }
+
+    connection = http.client.HTTPSConnection(metaDomain)
+    try:
+        connection.request("POST", metaPath, data, headers)
+        response = connection.getresponse()
+    except Exception as e:
+        app.logger.debug("Error envio mensaje")
+    finally:
+        connection.close()
+    # ======= ======= ======= ======= =======
+    # ======= ======= TEST MESSAGE ======= =======
     if(("test") in (texto.lower())):
         data = {
             "messaging_product": "whatsapp",    
@@ -210,10 +238,10 @@ def enviar_mensajes_whatsapp(texto, numero):
             }
         }
         dataList.append(data)
-    # ======= ======= ======= ======= ======= ======= =======
-    # ======= ======= ======= SALUDO BLOG Y BUTTONS INICIALES ======= ======= =======
+    # ======= ======= ======= ======= =======
+    # ======= ======= SALUDO BLOG Y BUTTONS INICIALES ======= =======
     elif("hola" in (texto.lower())):
-        # ======= ======= BLOG IMG SECTION ======= =======
+        # ======= BLOG IMG SECTION =======
         blogLastPost = []
 
         conn = http.client.HTTPSConnection(blogDomain)
@@ -234,55 +262,55 @@ def enviar_mensajes_whatsapp(texto, numero):
                 }
             }
             dataList.append(data)
+            # ======= MENU SECTION =======
+            data = {
+                "messaging_product": "whatsapp",    
+                "recipient_type": "individual",
+                "to": numero,
+                "type": "interactive",
+                "interactive": {
+                    "type": "button",
+                    "body":{
+                        "text": chatbotFlowMessages[0][0]
+                    },
+                    "footer":{
+                        "text": chatbotFlowMessages[0][1]
+                    },
+                    "action":{
+                        "buttons":[
+                            {
+                                "type": "reply",
+                                "reply":{
+                                    "id": chatbotFlowMessages[0][2][0],
+                                    "title": chatbotFlowMessages[0][2][1]
+                                }
+                            },
+                            {
+                                "type": "reply",
+                                "reply":{
+                                    "id": chatbotFlowMessages[0][3][0],
+                                    "title": chatbotFlowMessages[0][3][1]
+                                }
+                            },
+                            {
+                                "type": "reply",
+                                "reply":{
+                                    "id": chatbotFlowMessages[0][4][0],
+                                    "title": chatbotFlowMessages[0][4][1]
+                                }
+                            }
+                        ]                    
+                    }                
+                }
+            }
+            dataList.append(data)
+            # ======= ======= =======
         else:
             print(f"Error en la solicitud: {response.status} {response.reason}")
         conn.close()
-        # ======= ======= ======= ======= =======
-        # ======= ======= MENU SECTION ======= =======
-        data = {
-            "messaging_product": "whatsapp",    
-            "recipient_type": "individual",
-            "to": numero,
-            "type": "interactive",
-            "interactive": {
-                "type": "button",
-                "body":{
-                    "text": chatbotFlowMessages[0][0]
-                },
-                "footer":{
-                    "text": chatbotFlowMessages[0][1]
-                },
-                "action":{
-                    "buttons":[
-                        {
-                            "type": "reply",
-                            "reply":{
-                                "id": chatbotFlowMessages[0][2][0],
-                                "title": chatbotFlowMessages[0][2][1]
-                            }
-                        },
-                        {
-                            "type": "reply",
-                            "reply":{
-                                "id": chatbotFlowMessages[0][3][0],
-                                "title": chatbotFlowMessages[0][3][1]
-                            }
-                        },
-                        {
-                            "type": "reply",
-                            "reply":{
-                                "id": chatbotFlowMessages[0][4][0],
-                                "title": chatbotFlowMessages[0][4][1]
-                            }
-                        }
-                    ]                    
-                }                
-            }
-        }
-        dataList.append(data)
-        # ======= ======= ======= ======= =======
-    # ======= ======= ======= ======= ======= ======= =======
-    # ======= ======= ======= ENVIAR IMAGEN BLOG ======= ======= =======
+        # ======= ======= =======
+    # ======= ======= ======= ======= =======
+    # ======= ======= ENVIAR IMAGEN BLOG ======= =======
     elif("img" in (texto.lower())):
         blogLastPost = []
 
@@ -307,8 +335,8 @@ def enviar_mensajes_whatsapp(texto, numero):
         else:
             print(f"Error en la solicitud: {response.status} {response.reason}")
         conn.close()
-    # ======= ======= ======= ======= ======= ======= =======
-    # ======= ======= ======= ======= ======= ======= =======
+    # ======= ======= ======= ======= =======
+    # ======= ======= ======= ======= =======
     else:
         data = {
             "messaging_product": "whatsapp",    
@@ -322,7 +350,7 @@ def enviar_mensajes_whatsapp(texto, numero):
         }
         dataList.append(data)
 
-    # ======= ======= ======= ======= ======= ======= =======
+    # ======= ======= ======= ======= =======
 
     for dataItem in dataList:
         dataItem = json.dumps(dataItem)
