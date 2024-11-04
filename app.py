@@ -199,7 +199,6 @@ def enviar_mensajes_whatsapp(texto, numero):
     dataList = []
     # ======= ======= ======= TEST MESSAGE ======= ======= =======
     if(("test") in (texto.lower())):
-        app.logger.debug("In")
         data = {
             "messaging_product": "whatsapp",    
             "recipient_type": "individual",
@@ -224,9 +223,6 @@ def enviar_mensajes_whatsapp(texto, numero):
             data = response.read().decode('utf-8')
             json_data = json.loads(data)
             blogLastPost = json_data[0]
-            app.logger.debug("======= =======")
-            app.logger.debug(blogLastPost)
-            app.logger.debug("======= =======")
             data = {
                 "messaging_product": "whatsapp",
                 "recipient_type": "individual",
@@ -297,9 +293,6 @@ def enviar_mensajes_whatsapp(texto, numero):
             data = response.read().decode('utf-8')
             json_data = json.loads(data)
             blogLastPost = json_data[0]
-            app.logger.debug("======= =======")
-            app.logger.debug(blogLastPost)
-            app.logger.debug("======= =======")
             data = {
                 "messaging_product": "whatsapp",
                 "recipient_type": "individual",
