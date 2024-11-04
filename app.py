@@ -335,11 +335,9 @@ def enviar_mensajes_whatsapp(texto, numero):
             connection.request("POST", gamlpPathGetToken, data, headers)
             response = connection.getresponse()
             if(response.status == 200):
-                app.logger.debug('IN get token')
                 data = response.read().decode('utf-8')
                 json_data = json.loads(data)
                 gamlpToken = json_data["token"]
-                app.logger.debug(gamlpToken)
 
                 nombres = "Default"
 
@@ -355,15 +353,10 @@ def enviar_mensajes_whatsapp(texto, numero):
                     connection.request("POST", gamlpPathGetCiudadano, dataGetCiudadano, headers)
                     response = connection.getresponse()
                     if(response.status == 200):
-                        app.logger.debug('IN get ciudadano')
                         data = response.read().decode('utf-8')
-                        app.logger.debug(data)
                         json_data = json.loads(data)
-                        app.logger.debug(json_data)
-                        nombres = json_data["nombres"]+json_data["paterno"]+json_data["materno"]
-                        app.logger.debug(nombres)
+                        nombres = json_data["success"]["nombres"]+json_data["success"]["paterno"]+json_data["success"]["materno"]
         
-                        app.logger.debug("PREP MESSAGE")
                         data = {
                             "messaging_product": "whatsapp",    
                             "recipient_type": "individual",
@@ -377,7 +370,7 @@ def enviar_mensajes_whatsapp(texto, numero):
                         dataList.append(data)
 
                 except Exception as e:
-                    app.logger.debug("Error envio mensaje")
+                    app.logger.error(f"Error en el envío de mensaje: {str(e)}")
             else:
                 print(f"Error en la solicitud: {response.status} {response.reason}")
         except Exception as e:
