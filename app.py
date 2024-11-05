@@ -57,209 +57,128 @@ def add_data():
     return jsonify(json_serializer(new_data)), 201
 # ======= ======= ======= ======= ======= ======= =======
 # ======= ======= TEXT TO USE ======= =======
-flow1 = [
-    "¡Hola! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
-    "Selecciona una de las opciones.",
-    [
-        "btnOpt1",
-        "1️⃣. Informacion"
-    ],
-    [
-        "btnOpt2",
-        "2️⃣. Solicitud"
-    ],
-    [
-        "btnOpt3",
-        "3️⃣. Consulta"
+messageProcessing = { 
+    "type": "text", 
+    "content": [
+        "⏰. Procesando..."
+    ] 
+}
+messageInvalid = { 
+    "type": "text", 
+    "content": [
+        "Parece que la información ingresada no es válida. Por favor, asegúrate de proporcionar datos correctos.",
+        "Estoy aquí para ayudarte, pero parece que hemos recibido información incorrecta varias veces. Si no puedes continuar, te sugiero que nos llames al 155 para más ayuda"
+    ] 
+}
+message001 = {
+    "type": "button",
+    "content": [
+        "¡Hola! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
+        "Selecciona una de las opciones.",
+        ["btnOpt1", "1️⃣. Informacion"],
+        ["btnOpt2", "2️⃣. Solicitud"],
+        ["btnOpt3", "3️⃣. Consulta"]
     ]
-]
-flow2 = [
-    "Como fue tu experiencia general en la atencion?",
-     "Ver opciones",
-     "Selecciona una de las opciones",
-    [
-        "btnOpt1",
-        "1️⃣. Muy mala"
-    ],
-    [
-        "btnOpt2",
-        "2️⃣. Mala"
-    ],
-    [
-        "btnOpt3",
-        "3️⃣. Media"
+}
+message002 = {
+    "type": "button",
+    "content": [
+        "El programa ‘100 Jueves de Acción por el Bien Común’ busca mejorar los espacios públicos a través de acciones como deshierbe, limpieza de aceras y cunetas. ¡Participa haciendo una solicitud!",
+        "¿Te gustaría hacer una solicitud para mejorar tu entorno?",
+        "Selecciona una de las opciones.",
+        ["btnOpt1", "1️⃣. Hacer solicitud"],
+        ["btnOpt2", "2️⃣. No, gracias."],
+        ["btnOpt3", "3️⃣. Otra Consulta"]
     ]
-]
-
-flow3 = [
-    "El tiempo de espera fue:",
-    "Ver opciones",
-    "Selecciona una de las opciones",
-    [
-        "btnOpt1",
-        "1️⃣. Muy lento."
-    ],
-    [
-        "btnOpt2",
-        "2️⃣. Lento"
-    ],
-    [
-        "btnOpt3",
-        "3️⃣. Medio"
+}
+message003 = { 
+    "type": "text", 
+    "content": ["Gracias por tu interés en los '100 Jueves de Acción por el Bien Común'. ¡Hasta pronto!"] 
+}
+message004 = { 
+    "type": "text", 
+    "content": ["Para consultas generales, por favor, comunícate con nuestra línea gratuita al 155. ¡Estamos para ayudarte!"] 
+}
+message005 = { 
+    "type": "text", 
+    "content": ["Por favor, ingresa tu Cédula de Identidad (C.I.) para continuar."] 
+}
+message006 = { 
+    "type": "text", 
+    "content": ["Por favor ingresa un Cédula de Identidad (C.I.) valido y sin extension."] 
+}
+message007 = {
+    "type": "button",
+    "content": [
+        "¡Gracias! Ahora, elige una de las siguientes acciones para llevar a cabo",
+        "Selecciona una de las opciones.",
+        ["btnOpt1", "1️⃣. Deshierbe"],
+        ["btnOpt2", "2️⃣. Limp. Aceras"],
+        ["btnOpt3", "3️⃣. Limp. Cunetas"]
     ]
-]
-
-flow4 = [
-    "Desea agregar una nota sobre su experiencia? \n\n Ej: Buena actitud del operador de plataforma."
-]
-
-flow5 = [
-    "Gracias por su retroalimentacion",
-    [
-        "btnOpt1",
-        "1️⃣. Finalizar"
+}
+message008 = { 
+    "type": "text", 
+    "content": ["¡Genial, deshierbar es una excelente manera de embellecer nuestra comunidad!"] 
+}
+message009 = { 
+    "type": "text", 
+    "content": ["¡Perfecto, mantener las aceras limpias es crucial para una ciudad segura y acogedora!"] 
+    }
+message010 = { 
+    "type": "text", 
+    "content": ["¡Excelente, limpiar las cunetas ayuda a prevenir inundaciones y a mantener nuestras calles en buen estado!"] 
+}
+message011 = { 
+    "type": "text", 
+    "content": ["¿Dónde te gustaría que realizáramos esta acción? Por favor, describe la ubicación del lugar con la mayor precisión posible (por ejemplo, Zona y calle/avenida.)"] 
+}
+message012 = {
+    "type": "button",
+    "content": [
+        "Si tienes alguna fotografía o video del lugar, sería genial que los compartas con nosotros para que podamos entender mejor la situación.",
+        "Selecciona una de las opciones.",
+        ["btnOpt1", "1️⃣. Enviar Foto/Video"],
+        ["btnOpt2", "2️⃣. No enviar"]
     ]
-]
-
-flowInvalid = [
-    "Su respuesta no es valida, porfavor ingrese lo que se especifica."
-]
-
-chatbotFlowMessages = [
-    flow1,
-    flow2,
-    flow3,
-    flow4,
-    flow5,
-    flowInvalid
-]
-
-messageProcessing = [
-    "⏰. Procesando..."
-]
-messageInvalid = [
-    "Parece que la información ingresada no es válida. Por favor, asegúrate de proporcionar datos correctos.",
-    "Estoy aquí para ayudarte, pero parece que hemos recibido información incorrecta varias veces. Si no puedes continuar, te sugiero que nos llames al 155 para más ayuda"
-]
-message001 = [
-    "¡Hola! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
-    "Selecciona una de las opciones.",
-    [
-        "btnOpt1",
-        "1️⃣. Informacion"
-    ],
-    [
-        "btnOpt2",
-        "2️⃣. Solicitud"
-    ],
-    [
-        "btnOpt3",
-        "3️⃣. Consulta"
+}
+message013 = { 
+    "type": "text", 
+    "content": ["¡Perfecto! [Nombre del ciudadano] aquí tienes un resumen de tu solicitud:\n\n ● Acción solicitada: [Deshierbe, limpieza de aceras o cunetas]\n ● C.I.: [Número]\n ● Nombre: [Nombre del ciudadano]\n ● Ubicación: [Dirección ingresada]\n ● Foto: [Imagen adjunta/Sin imagen adjunta]"] 
+}
+message014 = {
+    "type": "button",
+    "content": [
+        "No encontramos tu C.I. en nuestros registros. ¿Te gustaría registrarte?",
+        "Selecciona una de las opciones.",
+        ["btnOpt1", "1️⃣. Sí, registrar"],
+        ["btnOpt2", "2️⃣. No, gracias"]
     ]
-]
-message002 = [
-    "El programa ‘100 Jueves de Acción por el Bien Común’ busca mejorar los espacios públicos a través de acciones como deshierbe, limpieza de aceras y cunetas. ¡Participa haciendo una solicitud!",
-    "¿Te gustaría hacer una solicitud para mejorar tu entorno?",
-    "Selecciona una de las opciones.",
-    [
-        "btnOpt1",
-        "1️⃣. Hacer solicitud"
-    ],
-    [
-        "btnOpt2",
-        "2️⃣. No, gracias."
-    ],
-    [
-        "btnOpt3",
-        "3️⃣. Otra Consulta"
-    ]
-]
-message003 = [
-    "Gracias por tu interés en los '100 Jueves de Acción por el Bien Común'. ¡Hasta pronto!"
-]
-message004 = [
-    "Para consultas generales, por favor, comunícate con nuestra línea gratuita al 155. ¡Estamos para ayudarte!"
-]
-message005 = [
-    "Por favor, ingresa tu Cédula de Identidad (C.I.) para continuar."
-]
-message006 = [
-    "Por favor ingresa un Cédula de Identidad (C.I.) valido y sin extension."
-]
-message007 = [
-    "¡Gracias! Ahora, elige una de las siguientes acciones para llevar a cabo",
-    "Selecciona una de las opciones.",
-    [
-        "btnOpt1",
-        "1️⃣. Deshierbe"
-    ],
-    [
-        "btnOpt2",
-        "2️⃣. Limp. Aceras"
-    ],
-    [
-        "btnOpt3",
-        "3️⃣. Limp. Cunetas"
-    ]
-]
-message008 = [
-    "¡Genial, deshierbar es una excelente manera de embellecer nuestra comunidad!"
-]
-message009 = [
-    "¡Perfecto, mantener las aceras limpias es crucial para una ciudad segura y acogedora!"
-]
-message010 = [
-    "¡Excelente, limpiar las cunetas ayuda a prevenir inundaciones y a mantener nuestras calles en buen estado!"
-]
-message011 = [
-    "¿Dónde te gustaría que realizáramos esta acción? Por favor, describe la ubicación del lugar con la mayor precisión posible (por ejemplo, Zona y calle/avenida.)"
-]
-message012 = [
-    "Si tienes alguna fotografía o video del lugar, sería genial que los compartas con nosotros para que podamos entender mejor la situación.",
-    "Selecciona una de las opciones.",
-    [
-        "btnOpt1",
-        "1️⃣. Enviar Foto/Video"
-    ],
-    [
-        "btnOpt2",
-        "2️⃣. No enviar"
-    ]
-]
-message013 = [
-    "¡Perfecto! [Nombre del ciudadano] aquí tienes un resumen de tu solicitud:\n\n ● Acción solicitada: [Deshierbe, limpieza de aceras o cunetas]\n ● C.I.: [Número]\n ● Nombre: [Nombre del ciudadano]\n ● Ubicación: [Dirección ingresada]\n ● Foto: [Imagen adjunta/Sin imagen adjunta]"
-]
-message014 = [
-    "No encontramos tu C.I. en nuestros registros. ¿Te gustaría registrarte?",
-    "Selecciona una de las opciones.",
-    [
-        "btnOpt1",
-        "1️⃣. Sí, registrar"
-    ],
-    [
-        "btnOpt2",
-        "2️⃣. No, gracias"
-    ]
-]
-message015 = [
-    "Por favor, ingresa los siguientes datos para registrarte.\n\n Apellido Paterno"
-]
-message016 = [
-    "Por favor, ingresa los siguientes datos para registrarte.\n\n Apellido Materno"
-]
-message017 = [
-    "Por favor, ingresa los siguientes datos para registrarte.\n\n Nombres"
-]
-message018 = [
-    "Por favor, ingresa los siguientes datos para registrarte.\n\n Correo Electronico"
-]
-message019 = [
-    "¡Listo! Ahora continuemos con tu solicitud."
-]
-message020 = [
-    "Para consultas generales, por favor, comunícate con nuestra línea gratuita al 155. ¡Estamos para ayudarte!"
-]
-
+}
+message015 = { 
+    "type": "text", 
+    "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Apellido Paterno"] 
+}
+message016 = { 
+    "type": "text", 
+    "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Apellido Materno"] 
+}
+message017 = { 
+    "type": "text", 
+    "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Nombres"] 
+}
+message018 = { 
+    "type": "text", 
+    "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Correo Electronico"] 
+}
+message019 = { 
+    "type": "text", 
+    "content": ["¡Listo! Ahora continuemos con tu solicitud."] 
+}
+message020 = { 
+    "type": "text", 
+    "content": ["Para consultas generales, por favor, comunícate con nuestra línea gratuita al 155. ¡Estamos para ayudarte!"] 
+}
 
 # SAME CODES 12=111, 112=12122, 1211=1212111111, 13=113
 chatbotMessages = {
@@ -318,7 +237,7 @@ def recibir_mensaje(req):
         value = changes["value"]
         objeto_mensaje = value["messages"]
     
-        app.logger.debug("POST MESSAGE CODE: "+flowMessageCode)
+        app.logger.debug("PRE MESSAGE CODE: "+flowMessageCode)
 
         if(objeto_mensaje):
             messages = objeto_mensaje[0]
@@ -360,7 +279,7 @@ def enviar_mensajes_whatsapp(texto, numero):
     global metaDomain
     global metaPath
 
-    global chatbotFlowMessages
+    global chatbotMessages
     global flowMessageCode
 
     dataList = []
@@ -401,7 +320,7 @@ def enviar_mensajes_whatsapp(texto, numero):
             "type": "text",
             "text": {
                 "preview_url": False,
-                "body": "Hola, Bienvenido"
+                "body": "Test message"
             }
         }
         dataList.append(data)
@@ -433,49 +352,9 @@ def enviar_mensajes_whatsapp(texto, numero):
             print(f"Error en la solicitud: {response.status} {response.reason}")
         conn.close()
         # ======= ======= =======
-        # ======= MENU SECTION =======
-        data = {
-            "messaging_product": "whatsapp",    
-            "recipient_type": "individual",
-            "to": numero,
-            "type": "interactive",
-            "interactive": {
-                "type": "button",
-                "body":{
-                    "text": chatbotFlowMessages[0][0]
-                },
-                "footer":{
-                    "text": chatbotFlowMessages[0][1]
-                },
-                "action":{
-                    "buttons":[
-                        {
-                            "type": "reply",
-                            "reply":{
-                                "id": chatbotFlowMessages[0][2][0],
-                                "title": chatbotFlowMessages[0][2][1]
-                            }
-                        },
-                        {
-                            "type": "reply",
-                            "reply":{
-                                "id": chatbotFlowMessages[0][3][0],
-                                "title": chatbotFlowMessages[0][3][1]
-                            }
-                        },
-                        {
-                            "type": "reply",
-                            "reply":{
-                                "id": chatbotFlowMessages[0][4][0],
-                                "title": chatbotFlowMessages[0][4][1]
-                            }
-                        }
-                    ]                    
-                }                
-            }
-        }
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode)
         dataList.append(data)
-        # ======= ======= =======
+        
     # ======= ======= ======= ======= =======
     # ======= ======= RECUPERAR CIUDADANO INFO SECTION ======= =======
     elif("consulta" in (texto.lower())):
@@ -569,6 +448,57 @@ def enviar_mensajes_whatsapp(texto, numero):
         finally:
             connection.close()
 # ======= ======= ======= ======= ======= ======= =======
+def generateMessageData(phoneNumber, messageList, messageCode, textIndex=None):
+    messageScope = messageList[messageCode]
+    messageScopeType = messageScope["type"]
+    messageScopeContent = messageScope["content"]
+
+    # ======= DATA DEFINITION =======
+    dataToReturn = {
+        "messaging_product": "whatsapp",    
+        "recipient_type": "individual",
+        "to": phoneNumber,
+        "type": messageScopeType
+    }
+    # ======= ======= =======
+    # ======= CONTENT DEFINITION =======
+    messageContent = {}
+    if( messageScopeType == "text" ):
+        messageContent = {
+            "preview_url": False,
+            "body": messageScopeContent[textIndex]
+        }
+
+    elif( messageScopeType == "button" ):
+        buttonsInContent = []
+
+        for data in messageScopeContent:
+            if isinstance(data, list):
+                dataToAdd = {
+                    "type": "reply",
+                    "reply":{
+                        "id": data[0],
+                        "title": data[1]
+                    }
+                }
+                buttonsInContent.append(dataToAdd)
+
+        messageContent = {
+            "type": "button",
+            "body":{
+                "text": messageScopeContent[0]
+            },
+            "footer":{
+                "text": messageScopeContent[1]
+            },
+            "action":{
+                "buttons":buttonsInContent
+            }
+        }
+    # ======= ======= =======
+    dataToReturn[messageScopeType] = messageContent
+    return dataToReturn
+
 # ======= ======= ======= APP INIT SECTION ======= ======= =======
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=80,debug=True)
