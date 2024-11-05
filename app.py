@@ -13,7 +13,7 @@ app = Flask(__name__)
 client = MongoClient('mongodb://localhost:27017/')
 db = client['meta_db_100J']
 
-metaToken = "EAAWXJp8ZCZCyABO4DNTtmVNWzeaZByFeGWCgIpR4iddz3gZCGJV1A3SydXHZAQYGcJuw5Q913ZBZCrAOWuzY1YjZACRHplaG3fCZAsfZAs0356PvaaNQ9ZCSj9y94pedLiY5nC0vVogZBr8Yx5ELycLQ51Jpj8kKNxM2KilIfpR81VbvAJOB8ww7E6ZAlUl8ns0ZCbwtQqsrOP76HuRzmmqVq3tJbXtiJY"
+metaToken = "EAAWXJp8ZCZCyABO88LZBY4QAIZBxSfjPjSG6d9cHCtjT7b1qO2a9hQN7cmxGkdmUw25TlsPg3fjCZA09i1QihB7J8EOR7wbFxYcFgo3yIx53IxZBiOTQ8BDPfBBTwWGUJWN4yZBivAFLA2Tn49ZBmyHRm16klqPfVNRE3SFlWZCzg7rxpvIS1UhAdfvkYr7P9Pe7hWzCMeY8QwI7ZBMSm8RENZBREnURQZDZD"
 webhookToken = "CHATBOTTOKENTEST"
 
 metaDomain = "graph.facebook.com"
@@ -138,7 +138,8 @@ messageProcessing = [
     "⏰. Procesando..."
 ]
 messageInvalid = [
-    "Su respuesta no es valida, porfavor ingrese lo que se especifica."
+    "Parece que la información ingresada no es válida. Por favor, asegúrate de proporcionar datos correctos.",
+    "Estoy aquí para ayudarte, pero parece que hemos recibido información incorrecta varias veces. Si no puedes continuar, te sugiero que nos llames al 155 para más ayuda"
 ]
 message001 = [
     "¡Hola! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
@@ -225,9 +226,42 @@ message012 = [
         "2️⃣. No enviar"
     ]
 ]
+message013 = [
+    "¡Perfecto! [Nombre del ciudadano] aquí tienes un resumen de tu solicitud:\n\n ● Acción solicitada: [Deshierbe, limpieza de aceras o cunetas]\n ● C.I.: [Número]\n ● Nombre: [Nombre del ciudadano]\n ● Ubicación: [Dirección ingresada]\n ● Foto: [Imagen adjunta/Sin imagen adjunta]"
+]
+message014 = [
+    "No encontramos tu C.I. en nuestros registros. ¿Te gustaría registrarte?",
+    "Selecciona una de las opciones.",
+    [
+        "btnOpt1",
+        "1️⃣. Sí, registrar"
+    ],
+    [
+        "btnOpt2",
+        "2️⃣. No, gracias"
+    ]
+]
+message015 = [
+    "Por favor, ingresa los siguientes datos para registrarte.\n\n Apellido Paterno"
+]
+message016 = [
+    "Por favor, ingresa los siguientes datos para registrarte.\n\n Apellido Materno"
+]
+message017 = [
+    "Por favor, ingresa los siguientes datos para registrarte.\n\n Nombres"
+]
+message018 = [
+    "Por favor, ingresa los siguientes datos para registrarte.\n\n Correo Electronico"
+]
+message019 = [
+    "¡Listo! Ahora continuemos con tu solicitud."
+]
+message020 = [
+    "Para consultas generales, por favor, comunícate con nuestra línea gratuita al 155. ¡Estamos para ayudarte!"
+]
 
 
-# SAME CODES 12=111, 
+# SAME CODES 12=111, 112=12122, 1211=1212111111, 13=113
 chatbotMessages = {
     "processing": messageProcessing,
     "invalid": messageInvalid,
@@ -242,7 +276,15 @@ chatbotMessages = {
     "12113": message010,
     "121111": message011,
     "1211111": message012,
+    "12111111": message013,
+    "1212": message014,
+    "12121": message015,
+    "121211": message016,
+    "1212111": message017,
+    "12121111": message018,
+    "121211111": message019,
     "122": message006,
+    "13": message020,
 }
 # ======= ======= ======= ======= =======
 # ======= ======= ======= SOME FUNCTIONS SECTION ======= ======= =======
@@ -501,7 +543,6 @@ def enviar_mensajes_whatsapp(texto, numero):
             }
         }
         dataList.append(data)
-
     # ======= ======= ======= ======= =======
 
     for dataItem in dataList:
