@@ -13,14 +13,14 @@ app = Flask(__name__)
 client = MongoClient('mongodb://localhost:27017/')
 db = client['meta_db_100J']
 
-metaToken = "EAAWXJp8ZCZCyABO2BvgpsJqZBzM7ZBcweJvYOW9lLnsfNrXcZBSTLNux2jeBwowyMepDw0ZA1EDEAGYc1v5lBic1EFJD1W34FN0IAaXcuK984nkEjkflnFw9MHceWRolYp3VxKrqD5K17zYjVHrrmZBfEpVTVDi8k0wg39ysmm5Lr1LtwYgxNs0oVkZCXhaoc3OeoQ7ZB1EMcJyzGUot3iAjZAOiMV"
+metaToken = "EAAWXJp8ZCZCyABO4DNTtmVNWzeaZByFeGWCgIpR4iddz3gZCGJV1A3SydXHZAQYGcJuw5Q913ZBZCrAOWuzY1YjZACRHplaG3fCZAsfZAs0356PvaaNQ9ZCSj9y94pedLiY5nC0vVogZBr8Yx5ELycLQ51Jpj8kKNxM2KilIfpR81VbvAJOB8ww7E6ZAlUl8ns0ZCbwtQqsrOP76HuRzmmqVq3tJbXtiJY"
 webhookToken = "CHATBOTTOKENTEST"
 
 metaDomain = "graph.facebook.com"
 metaPath = "/v20.0/374877792366425/messages"
 
-blogDomain = "lapaz.bo"
-blogPath = "/wp-json/catastroPlugin/v1/posts-categoria/catastroChatbot"
+blogDomain = "amun.bo"
+blogPath = "/wp-json/juevesAccion/v1/posts-categoria/100-jueves-accion"
 
 gamlpDomain = "131.0.0.17"
 gamlpPort = 8008
