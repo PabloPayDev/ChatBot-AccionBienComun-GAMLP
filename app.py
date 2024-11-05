@@ -306,7 +306,10 @@ def verificar_token(req):
     else:
         return jsonify({'error':'Token Invalido'}),401
 
+flowMessageCode = ""
+# ======= ======= ======= RECEIVE MESSAGE FUNCTION ======= ======= =======
 def recibir_mensaje(req):
+    global flowMessageCode
     try:
         req = request.get_json()
 
@@ -314,6 +317,8 @@ def recibir_mensaje(req):
         changes = entry["changes"][0]
         value = changes["value"]
         objeto_mensaje = value["messages"]
+    
+        app.logger.debug("POST MESSAGE CODE: "+flowMessageCode)
 
         if(objeto_mensaje):
             messages = objeto_mensaje[0]
@@ -326,6 +331,7 @@ def recibir_mensaje(req):
                     if(tipo_interactivo == "button_reply"):
                         text = messages["interactive"]["button_reply"]["id"]
                         numero = messages["from"]
+                        flowMessageCode = flowMessageCode+text[-1]
 
                         enviar_mensajes_whatsapp(text, numero)
 
@@ -338,6 +344,7 @@ def recibir_mensaje(req):
                 if("text" in messages):
                     text = messages["text"]["body"]
                     numero = messages["from"]
+                    flowMessageCode = flowMessageCode+"1"
 
                     enviar_mensajes_whatsapp(text, numero)
 
@@ -346,18 +353,18 @@ def recibir_mensaje(req):
     except Exception as e:
         app.logger.debug('Error: Recibir mensaje')
         return jsonify({'message':'EVENT RECEIVED'})
-    
+# ======= ======= ======= ======= ======= ======= =======
 # ======= ======= ======= SEND MESSAGE FUNCTION ======= ======= =======
-flowStep = 0
 def enviar_mensajes_whatsapp(texto, numero):
     global metaToken
     global metaDomain
     global metaPath
 
     global chatbotFlowMessages
-    global flowStep
+    global flowMessageCode
 
     dataList = []
+    app.logger.debug("POST MESSAGE CODE: "+flowMessageCode)
 
     # ======= ======= PROCESSING MESSAGE ======= =======
     data = {
@@ -400,7 +407,7 @@ def enviar_mensajes_whatsapp(texto, numero):
         dataList.append(data)
     # ======= ======= ======= ======= =======
     # ======= ======= SALUDO BLOG Y BUTTONS INICIALES ======= =======
-    elif("hola" in (texto.lower())):
+    elif( flowMessageCode=="1" ):
         # ======= BLOG IMG SECTION =======
         blogLastPost = []
 
