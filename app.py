@@ -190,7 +190,19 @@ message020 = {
     "content": ["Para consultas generales, por favor, comunícate con nuestra línea gratuita al 155. ¡Estamos para ayudarte!"] 
 }
 
-# SAME CODES 12=111, 112=12122, 1211=1212111111, 13=113
+reducedMessageCodes = {
+    "111": "12",
+    "122": "12",
+    "12122": "112",
+    "1212111111": "1211",
+    "113": "13",
+}
+
+specialMessageCodes = [
+    "1",
+    "12"
+]
+
 chatbotMessages = {
     "test": messageTest,
     "processing": messageProcessing,
@@ -238,6 +250,14 @@ def verificar_token(req):
         return challenge
     else:
         return jsonify({'error':'Token Invalido'}),401
+# ======= ======= ======= ======== =======
+# ======= ======= REDUCE MESSAGE CODE ======= =======
+def reduceMessageCode(messageCode):
+    global reducedMessageCodes
+    messageCode = messageCode if(messageCode not in reducedMessageCodes) else(reducedMessageCodes[messageCode])
+
+    return messageCode
+
 # ======= ======= ======= ======== =======
 # ======= ======= GENERATE MESSAGE DATA ======= =======
 def generateMessageData(phoneNumber, messageList, messageCode, textIndex=None):
@@ -347,9 +367,11 @@ def enviar_mensajes_whatsapp(texto, numero):
     global metaPath
 
     global chatbotMessages
+    global specialMessageCodes
     global flowMessageCode
 
     dataList = []
+    flowMessageCode = reduceMessageCode(flowMessageCode)
     app.logger.debug("POST MESSAGE CODE: "+flowMessageCode)
 
     # ======= ======= PROCESSING MESSAGE ======= =======
@@ -380,7 +402,12 @@ def enviar_mensajes_whatsapp(texto, numero):
         data = generateMessageData(numero, chatbotMessages, "test")
         dataList.append(data)
     # ======= ======= ======= ======= =======
-    # ======= ======= SALUDO BLOG Y BUTTONS INICIALES ======= =======
+    # ======= ======= SEND COMMOND FORMAT MESSAGE ======= =======
+    elif( flowMessageCode not in specialMessageCodes ):
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode)
+        dataList.append(data)
+    # ======= ======= ======= ======= =======
+    # ======= ======= SPECIAL MESSAGES ======= =======
     elif( flowMessageCode=="1" ):
         # ======= BLOG IMG SECTION =======
         blogLastPost = []
@@ -410,23 +437,6 @@ def enviar_mensajes_whatsapp(texto, numero):
         data = generateMessageData(numero, chatbotMessages, flowMessageCode)
         dataList.append(data)
         
-    # ======= ======= ======= ======= =======
-    # ======= ======= INFORMACION DEL PROGRAMA ======= =======
-    elif( flowMessageCode=="11" ):
-        data = generateMessageData(numero, chatbotMessages, flowMessageCode, 0)
-        dataList.append(data)
-        data = generateMessageData(numero, chatbotMessages, flowMessageCode, 1)
-        dataList.append(data)
-    # ======= ======= ======= ======= =======
-    # ======= ======= INFORMACION DEL PROGRAMA ======= =======
-    elif( flowMessageCode=="12" ):
-        data = generateMessageData(numero, chatbotMessages, flowMessageCode)
-        dataList.append(data)
-    # ======= ======= ======= ======= =======
-    # ======= ======= INFORMACION DEL PROGRAMA ======= =======
-    elif( flowMessageCode=="13" ):
-        data = generateMessageData(numero, chatbotMessages, flowMessageCode)
-        dataList.append(data)
     # ======= ======= ======= ======= =======
     # ======= ======= RECUPERAR CIUDADANO INFO SECTION ======= =======
     elif("consulta" in (texto.lower())):
