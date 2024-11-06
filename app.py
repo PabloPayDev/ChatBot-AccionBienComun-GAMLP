@@ -325,18 +325,12 @@ def recibir_mensaje(req):
                     else:
                         flowMessageCode = flowMessageCode+"2"
 
-                if(tipo == "interactive"):
-                    tipo_interactivo = messages["interactive"]["type"]
-                    if(tipo_interactivo == "button_reply"):
-                        text = messages["interactive"]["button_reply"]["id"]
-                        numero = messages["from"]
-                        flowMessageCode = flowMessageCode+text[-1]
+                elif(tipo == "interactive"):
+                    text = messages["interactive"]["button_reply"]["id"]
+                    numero = messages["from"]
+                    flowMessageCode = flowMessageCode+text[-1]
 
-                    if(tipo_interactivo == "list_reply"):
-                        text = messages["interactive"]["list_reply"]["id"]
-                        numero = messages["from"]
-
-                if("text" in messages):
+                elif("text" in messages):
                     text = messages["text"]["body"]
                     numero = messages["from"]
                     flowMessageCode = flowMessageCode+"1"
