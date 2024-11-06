@@ -453,18 +453,20 @@ def generateMessageData(phoneNumber, messageList, messageCode, textIndex=None):
     messageScopeType = messageScope["type"]
     messageScopeContent = messageScope["content"]
 
+    messageScopeTypeToData = messageScopeType if (messageScopeType != "button") else ("interactive")
+
     # ======= DATA DEFINITION =======
     dataToReturn = {
         "messaging_product": "whatsapp",    
         "recipient_type": "individual",
         "to": phoneNumber,
-        "type": messageScopeType
+        "type": messageScopeTypeToData
     }
     # ======= ======= =======
     # ======= CONTENT DEFINITION =======
     messageContent = {}
     if( messageScopeType == "text" ):
-        messageContent = {
+        messageContent = { 
             "preview_url": False,
             "body": messageScopeContent[textIndex]
         }
@@ -484,7 +486,7 @@ def generateMessageData(phoneNumber, messageList, messageCode, textIndex=None):
                 buttonsInContent.append(dataToAdd)
 
         messageContent = {
-            "type": "button",
+            "type": messageScopeTypeToData,
             "body":{
                 "text": messageScopeContent[0]
             },
@@ -496,7 +498,7 @@ def generateMessageData(phoneNumber, messageList, messageCode, textIndex=None):
             }
         }
     # ======= ======= =======
-    dataToReturn[messageScopeType] = messageContent
+    dataToReturn[messageScopeTypeToData] = messageContent
     return dataToReturn
 
 # ======= ======= ======= APP INIT SECTION ======= ======= =======
