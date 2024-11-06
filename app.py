@@ -315,6 +315,16 @@ def recibir_mensaje(req):
                 tipo = messages["type"]
                 #addMessage(json.dumps(messages))
 
+                if(flowMessageCode=="12"):
+                    if((len(messages["text"]["body"]) <= 12) and (messages["text"]["body"].isdigit())):
+                        flowMessageCode = flowMessageCode+"1"
+                        if(messages["text"]["body"] == "10932239"):
+                            flowMessageCode = flowMessageCode+"1"
+                        else:
+                            flowMessageCode = flowMessageCode+"2"
+                    else:
+                        flowMessageCode = flowMessageCode+"2"
+
                 if(tipo == "interactive"):
                     tipo_interactivo = messages["interactive"]["type"]
                     if(tipo_interactivo == "button_reply"):
@@ -381,49 +391,6 @@ def enviar_mensajes_whatsapp(texto, numero):
         data = generateMessageData(numero, chatbotMessages, "test")
         dataList.append(data)
     # ======= ======= ======= ======= =======
-    # ======= ======= SEND COMMOND FORMAT MESSAGE ======= =======
-    elif( flowMessageCode not in specialMessageCodes ):
-        data = generateMessageData(numero, chatbotMessages, flowMessageCode)
-        dataList.append(data)
-    # ======= ======= ======= ======= =======
-    # ======= ======= SPECIAL MESSAGES ======= =======
-    elif( flowMessageCode=="1" ):
-        # ======= BLOG IMG SECTION =======
-        blogLastPost = []
-
-        conn = http.client.HTTPSConnection(blogDomain)
-        conn.request("GET", blogPath)
-        response = conn.getresponse()
-        if(response.status == 200):
-            data = response.read().decode('utf-8')
-            json_data = json.loads(data)
-            blogLastPost = json_data[0]
-            data = {
-                "messaging_product": "whatsapp",
-                "recipient_type": "individual",
-                "to": numero,
-                "type": "image",
-                "image": {
-                    "link": blogLastPost["featured_image"], 
-                    "caption": blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"]
-                }
-            }
-            dataList.append(data)
-        else:
-            print(f"Error en la solicitud: {response.status} {response.reason}")
-        conn.close()
-        # ======= ======= =======
-        data = generateMessageData(numero, chatbotMessages, flowMessageCode)
-        dataList.append(data)
-
-        
-    elif( flowMessageCode=="11" ):
-        data = generateMessageData(numero, chatbotMessages, flowMessageCode+"t")
-        dataList.append(data)
-        data = generateMessageData(numero, chatbotMessages, flowMessageCode+"b")
-        dataList.append(data)
-        
-    # ======= ======= ======= ======= =======
     # ======= ======= RECUPERAR CIUDADANO INFO SECTION ======= =======
     elif("consulta" in (texto.lower())):
         headers = {
@@ -482,6 +449,48 @@ def enviar_mensajes_whatsapp(texto, numero):
             #addMessageLog(json.dumps(e))
         finally:
             connection.close()
+    # ======= ======= ======= ======= =======
+    # ======= ======= SEND COMMOND FORMAT MESSAGE ======= =======
+    elif( flowMessageCode not in specialMessageCodes ):
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode)
+        dataList.append(data)
+    # ======= ======= ======= ======= =======
+    # ======= ======= SPECIAL MESSAGES ======= =======
+    elif( flowMessageCode=="1" ):
+        # ======= BLOG IMG SECTION =======
+        blogLastPost = []
+
+        conn = http.client.HTTPSConnection(blogDomain)
+        conn.request("GET", blogPath)
+        response = conn.getresponse()
+        if(response.status == 200):
+            data = response.read().decode('utf-8')
+            json_data = json.loads(data)
+            blogLastPost = json_data[0]
+            data = {
+                "messaging_product": "whatsapp",
+                "recipient_type": "individual",
+                "to": numero,
+                "type": "image",
+                "image": {
+                    "link": blogLastPost["featured_image"], 
+                    "caption": blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"]
+                }
+            }
+            dataList.append(data)
+        else:
+            print(f"Error en la solicitud: {response.status} {response.reason}")
+        conn.close()
+        # ======= ======= =======
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode)
+        dataList.append(data)
+
+    elif( flowMessageCode=="11" ):
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode+"t")
+        dataList.append(data)
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode+"b")
+        dataList.append(data)
+        
     # ======= ======= ======= ======= =======
     # ======= ======= ======= ======= =======
     else:
