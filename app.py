@@ -308,7 +308,6 @@ def recibir_mensaje(req):
         objeto_mensaje = value["messages"]
     
         app.logger.debug("PRE MESSAGE CODE: "+flowMessageCode)
-        app.logger.debug(objeto_mensaje)
 
         if(objeto_mensaje):
             messages = objeto_mensaje[0]
@@ -317,6 +316,8 @@ def recibir_mensaje(req):
                 #addMessage(json.dumps(messages))
 
                 if(flowMessageCode=="12"):
+                    text = messages["interactive"]["button_reply"]["id"]
+                    numero = messages["from"]
                     if((len(messages["text"]["body"]) <= 12) and (messages["text"]["body"].isdigit())):
                         flowMessageCode = flowMessageCode+"1"
                         if(messages["text"]["body"] == "10932239"):
