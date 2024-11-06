@@ -57,137 +57,145 @@ def add_data():
     return jsonify(json_serializer(new_data)), 201
 # ======= ======= ======= ======= ======= ======= =======
 # ======= ======= TEXT TO USE ======= =======
-messageTest = { 
-    "type": "text", 
-    "content": [
-        "Test message."
-    ] 
-}
-messageProcessing = { 
-    "type": "text", 
-    "content": [
-        "⏰. Procesando..."
-    ] 
-}
-messageInvalid = { 
-    "type": "text", 
-    "content": [
-        "Parece que la información ingresada no es válida. Por favor, asegúrate de proporcionar datos correctos.",
-        "Estoy aquí para ayudarte, pero parece que hemos recibido información incorrecta varias veces. Si no puedes continuar, te sugiero que nos llames al 155 para más ayuda"
-    ] 
-}
-messageCancel = { 
-    "type": "text", 
-    "content": ["Operacion cancelada, volviendo al menu."] 
-}
-message001 = {
-    "type": "button",
-    "content": [
-        "¡Hola! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
-        "Selecciona una de las opciones.",
-        ["btnOpt1", "1️⃣. Informacion"],
-        ["btnOpt2", "2️⃣. Solicitud"],
-        ["btnOpt3", "3️⃣. Consulta"]
-    ]
-}
-message002 = {
-    "type": "button",
-    "content": [
-        "El programa ‘100 Jueves de Acción por el Bien Común’ busca mejorar los espacios públicos a través de acciones como deshierbe, limpieza de aceras y cunetas. ¡Participa haciendo una solicitud!",
-        "¿Te gustaría hacer una solicitud para mejorar tu entorno?",
-        "Selecciona una de las opciones.",
-        ["btnOpt1", "1️⃣. Hacer solicitud"],
-        ["btnOpt2", "2️⃣. No, gracias."],
-        ["btnOpt3", "3️⃣. Otra Consulta"]
-    ]
-}
-message003 = { 
-    "type": "text", 
-    "content": ["Gracias por tu interés en los '100 Jueves de Acción por el Bien Común'. ¡Hasta pronto!"] 
-}
-message004 = { 
-    "type": "text", 
-    "content": ["Para consultas generales, por favor, comunícate con nuestra línea gratuita al 155. ¡Estamos para ayudarte!"] 
-}
-message005 = { 
-    "type": "text", 
-    "content": ["Por favor, ingresa tu Cédula de Identidad (C.I.) para continuar."] 
-}
-message006 = { 
-    "type": "text", 
-    "content": ["Por favor ingresa un Cédula de Identidad (C.I.) valido y sin extension."] 
-}
-message007 = {
-    "type": "button",
-    "content": [
-        "¡Gracias! Ahora, elige una de las siguientes acciones para llevar a cabo",
-        "Selecciona una de las opciones.",
-        ["btnOpt1", "1️⃣. Deshierbe"],
-        ["btnOpt2", "2️⃣. Limp. Aceras"],
-        ["btnOpt3", "3️⃣. Limp. Cunetas"]
-    ]
-}
-message008 = { 
-    "type": "text", 
-    "content": ["¡Genial, deshierbar es una excelente manera de embellecer nuestra comunidad!"] 
-}
-message009 = { 
-    "type": "text", 
-    "content": ["¡Perfecto, mantener las aceras limpias es crucial para una ciudad segura y acogedora!"] 
+chatbotMessages = {
+    "test": { 
+        "type": "text", 
+        "content": [
+            "⏰. Procesando..."
+        ] 
+    },
+    "processing": { 
+        "type": "text", 
+        "content": [
+            "⏰. Procesando..."
+        ] 
+    },
+    "invalid": { 
+        "type": "text", 
+        "content": [
+            "Parece que la información ingresada no es válida. Por favor, asegúrate de proporcionar datos correctos.",
+            "Estoy aquí para ayudarte, pero parece que hemos recibido información incorrecta varias veces. Si no puedes continuar, te sugiero que nos llames al 155 para más ayuda"
+        ] 
+    },
+    "cancel": { 
+        "type": "text", 
+        "content": ["Operacion cancelada, volviendo al menu."] 
+    },
+    "1": {
+        "type": "button",
+        "content": [
+            "¡Hola! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
+            "Selecciona una de las opciones.",
+            ["btnOpt1", "1️⃣. Informacion"],
+            ["btnOpt2", "2️⃣. Solicitud"],
+            ["btnOpt3", "3️⃣. Consulta"]
+        ]
+    },
+    "11t": {
+        "type": "text",
+        "content": [
+            "El programa ‘100 Jueves de Acción por el Bien Común’ busca mejorar los espacios públicos a través de acciones como deshierbe, limpieza de aceras y cunetas. ¡Participa haciendo una solicitud!",
+        ]
+    },
+    "11b": {
+        "type": "button",
+        "content": [
+            "El programa ‘100 Jueves de Acción por el Bien Común’ busca mejorar los espacios públicos a través de acciones como deshierbe, limpieza de aceras y cunetas. ¡Participa haciendo una solicitud!",
+            "¿Te gustaría hacer una solicitud para mejorar tu entorno?",
+            "Selecciona una de las opciones.",
+            ["btnOpt1", "1️⃣. Hacer solicitud"],
+            ["btnOpt2", "2️⃣. No, gracias."],
+            ["btnOpt3", "3️⃣. Otra Consulta"]
+        ]
+    },
+    "112": { 
+        "type": "text", 
+        "content": ["Gracias por tu interés en los '100 Jueves de Acción por el Bien Común'. ¡Hasta pronto!"] 
+    },
+    "113": { 
+        "type": "text", 
+        "content": ["Para consultas generales, por favor, comunícate con nuestra línea gratuita al 155. ¡Estamos para ayudarte!"] 
+    },
+    "12": { 
+        "type": "text", 
+        "content": ["Por favor, ingresa tu Cédula de Identidad (C.I.) para continuar."] 
+    },
+    "1211": {
+        "type": "button",
+        "content": [
+            "¡Gracias! Ahora, elige una de las siguientes acciones para llevar a cabo",
+            "Selecciona una de las opciones.",
+            ["btnOpt1", "1️⃣. Deshierbe"],
+            ["btnOpt2", "2️⃣. Limp. Aceras"],
+            ["btnOpt3", "3️⃣. Limp. Cunetas"]
+        ]
+    },
+    "12111": { 
+        "type": "text", 
+        "content": ["¡Genial, deshierbar es una excelente manera de embellecer nuestra comunidad!"] 
+    },
+    "12112": { 
+        "type": "text", 
+        "content": ["¡Perfecto, mantener las aceras limpias es crucial para una ciudad segura y acogedora!"] 
+    },
+    "12113": { 
+        "type": "text", 
+        "content": ["¡Excelente, limpiar las cunetas ayuda a prevenir inundaciones y a mantener nuestras calles en buen estado!"] 
+    },
+    "121111": { 
+        "type": "text", 
+        "content": ["¿Dónde te gustaría que realizáramos esta acción? Por favor, describe la ubicación del lugar con la mayor precisión posible (por ejemplo, Zona y calle/avenida.)"] 
+    },
+    "1211111": {
+        "type": "button",
+        "content": [
+            "Si tienes alguna fotografía o video del lugar, sería genial que los compartas con nosotros para que podamos entender mejor la situación.",
+            "Selecciona una de las opciones.",
+            ["btnOpt1", "1️⃣. Enviar Foto/Video"],
+            ["btnOpt2", "2️⃣. No enviar"]
+        ]
+    },
+    "12111111": { 
+        "type": "text", 
+        "content": ["¡Perfecto! [Nombre del ciudadano] aquí tienes un resumen de tu solicitud:\n\n ● Acción solicitada: [Deshierbe, limpieza de aceras o cunetas]\n ● C.I.: [Número]\n ● Nombre: [Nombre del ciudadano]\n ● Ubicación: [Dirección ingresada]\n ● Foto: [Imagen adjunta/Sin imagen adjunta]"] 
+    },
+    "1212": {
+        "type": "button",
+        "content": [
+            "No encontramos tu C.I. en nuestros registros. ¿Te gustaría registrarte?",
+            "Selecciona una de las opciones.",
+            ["btnOpt1", "1️⃣. Sí, registrar"],
+            ["btnOpt2", "2️⃣. No, gracias"]
+        ]
+    },
+    "12121": { 
+        "type": "text", 
+        "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Apellido Paterno"] 
+    },
+    "121211": { 
+        "type": "text", 
+        "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Apellido Materno"] 
+    },
+    "1212111": { 
+        "type": "text", 
+        "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Nombres"] 
+    },
+    "12121111": { 
+        "type": "text", 
+        "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Correo Electronico"] 
+    },
+    "121211111": { 
+        "type": "text", 
+        "content": ["¡Listo! Ahora continuemos con tu solicitud."] 
+    },
+    "122": { 
+        "type": "text", 
+        "content": ["Por favor ingresa un Cédula de Identidad (C.I.) valido y sin extension."] 
+    },
+    "13": { 
+        "type": "text", 
+        "content": ["Para consultas generales, por favor, comunícate con nuestra línea gratuita al 155. ¡Estamos para ayudarte!"] 
     }
-message010 = { 
-    "type": "text", 
-    "content": ["¡Excelente, limpiar las cunetas ayuda a prevenir inundaciones y a mantener nuestras calles en buen estado!"] 
-}
-message011 = { 
-    "type": "text", 
-    "content": ["¿Dónde te gustaría que realizáramos esta acción? Por favor, describe la ubicación del lugar con la mayor precisión posible (por ejemplo, Zona y calle/avenida.)"] 
-}
-message012 = {
-    "type": "button",
-    "content": [
-        "Si tienes alguna fotografía o video del lugar, sería genial que los compartas con nosotros para que podamos entender mejor la situación.",
-        "Selecciona una de las opciones.",
-        ["btnOpt1", "1️⃣. Enviar Foto/Video"],
-        ["btnOpt2", "2️⃣. No enviar"]
-    ]
-}
-message013 = { 
-    "type": "text", 
-    "content": ["¡Perfecto! [Nombre del ciudadano] aquí tienes un resumen de tu solicitud:\n\n ● Acción solicitada: [Deshierbe, limpieza de aceras o cunetas]\n ● C.I.: [Número]\n ● Nombre: [Nombre del ciudadano]\n ● Ubicación: [Dirección ingresada]\n ● Foto: [Imagen adjunta/Sin imagen adjunta]"] 
-}
-message014 = {
-    "type": "button",
-    "content": [
-        "No encontramos tu C.I. en nuestros registros. ¿Te gustaría registrarte?",
-        "Selecciona una de las opciones.",
-        ["btnOpt1", "1️⃣. Sí, registrar"],
-        ["btnOpt2", "2️⃣. No, gracias"]
-    ]
-}
-message015 = { 
-    "type": "text", 
-    "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Apellido Paterno"] 
-}
-message016 = { 
-    "type": "text", 
-    "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Apellido Materno"] 
-}
-message017 = { 
-    "type": "text", 
-    "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Nombres"] 
-}
-message018 = { 
-    "type": "text", 
-    "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Correo Electronico"] 
-}
-message019 = { 
-    "type": "text", 
-    "content": ["¡Listo! Ahora continuemos con tu solicitud."] 
-}
-message020 = { 
-    "type": "text", 
-    "content": ["Para consultas generales, por favor, comunícate con nuestra línea gratuita al 155. ¡Estamos para ayudarte!"] 
 }
 
 reducedMessageCodes = {
@@ -202,33 +210,6 @@ specialMessageCodes = [
     "1",
     "12"
 ]
-
-chatbotMessages = {
-    "test": messageTest,
-    "processing": messageProcessing,
-    "invalid": messageInvalid,
-    "cancel": messageCancel,
-    "1": message001,
-    "11": message002,
-    "112": message003,
-    "113": message004,
-    "12": message005,
-    "1211": message007,
-    "12111": message008,
-    "12112": message009,
-    "12113": message010,
-    "121111": message011,
-    "1211111": message012,
-    "12111111": message013,
-    "1212": message014,
-    "12121": message015,
-    "121211": message016,
-    "1212111": message017,
-    "12121111": message018,
-    "121211111": message019,
-    "122": message006,
-    "13": message020,
-}
 # ======= ======= ======= ======= =======
 # ======= ======= ======= FUNCTIOS SECTIONS ======= ======= =======
 # ======= ======= JSON SERIALIZER FUN ======= =======
@@ -260,7 +241,7 @@ def reduceMessageCode(messageCode):
 
 # ======= ======= ======= ======== =======
 # ======= ======= GENERATE MESSAGE DATA ======= =======
-def generateMessageData(phoneNumber, messageList, messageCode, textIndex=None):
+def generateMessageData(phoneNumber, messageList, messageCode):
     messageScope = messageList[messageCode]
     messageScopeType = messageScope["type"]
     messageScopeContent = messageScope["content"]
@@ -278,10 +259,9 @@ def generateMessageData(phoneNumber, messageList, messageCode, textIndex=None):
     # ======= CONTENT DEFINITION =======
     messageContent = {}
     if( messageScopeType == "text" ):
-        textIndex = textIndex if (textIndex is not None) else (0)
         messageContent = { 
             "preview_url": False,
-            "body": messageScopeContent[textIndex]
+            "body": messageScopeContent[0]
         }
 
     elif( messageScopeType == "button" ):
@@ -435,6 +415,13 @@ def enviar_mensajes_whatsapp(texto, numero):
         conn.close()
         # ======= ======= =======
         data = generateMessageData(numero, chatbotMessages, flowMessageCode)
+        dataList.append(data)
+
+        
+    elif( flowMessageCode=="11" ):
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode+"t")
+        dataList.append(data)
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode+"b")
         dataList.append(data)
         
     # ======= ======= ======= ======= =======
