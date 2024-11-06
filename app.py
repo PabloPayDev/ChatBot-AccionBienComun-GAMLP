@@ -352,7 +352,8 @@ def enviar_mensajes_whatsapp(texto, numero):
             print(f"Error en la solicitud: {response.status} {response.reason}")
         conn.close()
         # ======= ======= =======
-        data = generateMessageData(numero, chatbotMessages, flowMessageCode)
+
+        #data = generateMessageData(numero, chatbotMessages, flowMessageCode)
         dataList.append(data)
         
     # ======= ======= ======= ======= =======
