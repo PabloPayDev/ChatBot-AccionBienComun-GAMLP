@@ -100,7 +100,6 @@ chatbotMessages = {
     "11b": {
         "type": "button",
         "content": [
-            "El programa ‘100 Jueves de Acción por el Bien Común’ busca mejorar los espacios públicos a través de acciones como deshierbe, limpieza de aceras y cunetas. ¡Participa haciendo una solicitud!",
             "¿Te gustaría hacer una solicitud para mejorar tu entorno?",
             "Selecciona una de las opciones.",
             ["btnOpt1", "1️⃣. Hacer solicitud"],
