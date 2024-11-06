@@ -208,7 +208,7 @@ reducedMessageCodes = {
 
 specialMessageCodes = [
     "1",
-    "12"
+    "11"
 ]
 # ======= ======= ======= ======= =======
 # ======= ======= ======= FUNCTIOS SECTIONS ======= ======= =======
