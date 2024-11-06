@@ -308,6 +308,7 @@ def recibir_mensaje(req):
         objeto_mensaje = value["messages"]
     
         app.logger.debug("PRE MESSAGE CODE: "+flowMessageCode)
+        app.logger.debug(objeto_mensaje)
 
         if(objeto_mensaje):
             messages = objeto_mensaje[0]
