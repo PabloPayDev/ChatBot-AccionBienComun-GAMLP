@@ -70,6 +70,10 @@ messageInvalid = {
         "Estoy aquí para ayudarte, pero parece que hemos recibido información incorrecta varias veces. Si no puedes continuar, te sugiero que nos llames al 155 para más ayuda"
     ] 
 }
+messageCancel = { 
+    "type": "text", 
+    "content": ["Operacion cancelada, volviendo al menu."] 
+}
 message001 = {
     "type": "button",
     "content": [
@@ -184,6 +188,7 @@ message020 = {
 chatbotMessages = {
     "processing": messageProcessing,
     "invalid": messageInvalid,
+    "cancel": messageCancel,
     "1": message001,
     "11": message002,
     "112": message003,
@@ -310,6 +315,21 @@ def enviar_mensajes_whatsapp(texto, numero):
         app.logger.debug("Error envio mensaje")
     finally:
         connection.close()
+    # ======= ======= ======= ======= =======
+    # ======= ======= CANCELAR MESSAGE ======= =======
+    if(("cancelar") in (texto.lower())):
+        flowMessageCode = "1"
+        data = {
+            "messaging_product": "whatsapp",    
+            "recipient_type": "individual",
+            "to": numero,
+            "type": "text",
+            "text": {
+                "preview_url": False,
+                "body": "Cancelado"
+            }
+        }
+        dataList.append(data)
     # ======= ======= ======= ======= =======
     # ======= ======= TEST MESSAGE ======= =======
     if(("test") in (texto.lower())):
