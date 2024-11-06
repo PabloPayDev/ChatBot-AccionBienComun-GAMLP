@@ -57,6 +57,12 @@ def add_data():
     return jsonify(json_serializer(new_data)), 201
 # ======= ======= ======= ======= ======= ======= =======
 # ======= ======= TEXT TO USE ======= =======
+messageTest = { 
+    "type": "text", 
+    "content": [
+        "Test message."
+    ] 
+}
 messageProcessing = { 
     "type": "text", 
     "content": [
@@ -186,6 +192,7 @@ message020 = {
 
 # SAME CODES 12=111, 112=12122, 1211=1212111111, 13=113
 chatbotMessages = {
+    "test": messageTest,
     "processing": messageProcessing,
     "invalid": messageInvalid,
     "cancel": messageCancel,
@@ -257,20 +264,16 @@ def recibir_mensaje(req):
                         numero = messages["from"]
                         flowMessageCode = flowMessageCode+text[-1]
 
-                        enviar_mensajes_whatsapp(text, numero)
-
                     if(tipo_interactivo == "list_reply"):
                         text = messages["interactive"]["list_reply"]["id"]
                         numero = messages["from"]
-
-                        enviar_mensajes_whatsapp(text, numero)
 
                 if("text" in messages):
                     text = messages["text"]["body"]
                     numero = messages["from"]
                     flowMessageCode = flowMessageCode+"1"
 
-                    enviar_mensajes_whatsapp(text, numero)
+                enviar_mensajes_whatsapp(text, numero)
 
         return jsonify({'message':'EVENT RECEIVED'})
 
@@ -291,21 +294,12 @@ def enviar_mensajes_whatsapp(texto, numero):
     app.logger.debug("POST MESSAGE CODE: "+flowMessageCode)
 
     # ======= ======= PROCESSING MESSAGE ======= =======
-    data = {
-        "messaging_product": "whatsapp",    
-        "recipient_type": "individual",
-        "to": numero,
-        "type": "text",
-        "text": {
-            "preview_url": False,
-            "body": "⏰. Procesando..."
-        }
-    }
-    data = json.dumps(data)
     headers = {
         "Content-Type" : "application/json",
         "Authorization": "Bearer "+metaToken
     }
+    data = generateMessageData(numero, chatbotMessages, "processing")
+    data = json.dumps(data)
 
     connection = http.client.HTTPSConnection(metaDomain)
     try:
@@ -319,30 +313,12 @@ def enviar_mensajes_whatsapp(texto, numero):
     # ======= ======= CANCELAR MESSAGE ======= =======
     if(("cancelar") in (texto.lower())):
         flowMessageCode = "1"
-        data = {
-            "messaging_product": "whatsapp",    
-            "recipient_type": "individual",
-            "to": numero,
-            "type": "text",
-            "text": {
-                "preview_url": False,
-                "body": "Cancelado"
-            }
-        }
+        data = generateMessageData(numero, chatbotMessages, "cancel")
         dataList.append(data)
     # ======= ======= ======= ======= =======
     # ======= ======= TEST MESSAGE ======= =======
     if(("test") in (texto.lower())):
-        data = {
-            "messaging_product": "whatsapp",    
-            "recipient_type": "individual",
-            "to": numero,
-            "type": "text",
-            "text": {
-                "preview_url": False,
-                "body": "Test message"
-            }
-        }
+        data = generateMessageData(numero, chatbotMessages, "test")
         dataList.append(data)
     # ======= ======= ======= ======= =======
     # ======= ======= SALUDO BLOG Y BUTTONS INICIALES ======= =======
@@ -378,13 +354,12 @@ def enviar_mensajes_whatsapp(texto, numero):
     # ======= ======= ======= ======= =======
     # ======= ======= RECUPERAR CIUDADANO INFO SECTION ======= =======
     elif("consulta" in (texto.lower())):
-        app.logger.debug('IN')
+        headers = {
+            "Content-Type" : "application/json"
+        }
         data = {
             "usuario": gamlpUser,
             "clave": gamlpPass
-        }
-        headers = {
-            "Content-Type" : "application/json"
         }
         data = json.dumps(data)
         connection = http.client.HTTPConnection(gamlpDomain, gamlpPort)
@@ -412,7 +387,7 @@ def enviar_mensajes_whatsapp(texto, numero):
                     if(response.status == 200):
                         data = response.read().decode('utf-8')
                         json_data = json.loads(data)
-                        nombres = json_data["success"]["nombres"]+json_data["success"]["paterno"]+json_data["success"]["materno"]
+                        nombres = json_data["success"]["nombres"]+" "+json_data["success"]["paterno"]+" "+json_data["success"]["materno"]
         
                         data = {
                             "messaging_product": "whatsapp",    
@@ -438,16 +413,7 @@ def enviar_mensajes_whatsapp(texto, numero):
     # ======= ======= ======= ======= =======
     # ======= ======= ======= ======= =======
     else:
-        data = {
-            "messaging_product": "whatsapp",    
-            "recipient_type": "individual",
-            "to": numero,
-            "type": "text",
-            "text": {
-                "preview_url": False,
-                "body": chatbotFlowMessages[5][0]
-            }
-        }
+        data = generateMessageData(numero, chatbotMessages, "invalid")
         dataList.append(data)
     # ======= ======= ======= ======= =======
 
@@ -486,6 +452,7 @@ def generateMessageData(phoneNumber, messageList, messageCode, textIndex=None):
     # ======= CONTENT DEFINITION =======
     messageContent = {}
     if( messageScopeType == "text" ):
+        textIndex = textIndex if (textIndex is not None) else (0)
         messageContent = { 
             "preview_url": False,
             "body": messageScopeContent[textIndex]
