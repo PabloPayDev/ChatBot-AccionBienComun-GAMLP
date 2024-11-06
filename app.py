@@ -354,7 +354,7 @@ def enviar_mensajes_whatsapp(texto, numero):
         # ======= ======= =======
 
         #data = generateMessageData(numero, chatbotMessages, flowMessageCode)
-        dataList.append(data)
+        #dataList.append(data)
         
     # ======= ======= ======= ======= =======
     # ======= ======= RECUPERAR CIUDADANO INFO SECTION ======= =======
