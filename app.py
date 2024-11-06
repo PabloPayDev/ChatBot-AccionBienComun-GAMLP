@@ -13,7 +13,7 @@ app = Flask(__name__)
 client = MongoClient('mongodb://localhost:27017/')
 db = client['meta_db_100J']
 
-metaToken = "EAAWXJp8ZCZCyABO1c4XBjpfadxepyGEOQoT6MZALqxqrxPFq8JC92GvQjDKt0A9pBpHBWSxGcSkqqIAZB3FW7HeC1Lw0ts6jbw9vXJo3TZCwn0dHZA6a3uBnoeecCBlXUA8bZBZA6E8btx7aKToA0wVrhD11VyMu2bgJswN3Xj7umJNpJzHe7mROoztZBoZC7a8oHkNOmXsxk4IULPGVP1yxd5CUTt"
+metaToken = "EAAWXJp8ZCZCyABO2dnXGk2iCxDeq7XUZARBB6NwOavJLOjSlq31zUSHIwAODY3y7BeBbyYw6opoZBb3Xs1PgW9rEhuni5d0V3hDELzQR55gcYJ9Wr1YZAZBxScGHo5ICDYHP6jJJjfQZCJabs3VmtiawhFIpGVUwzaGxe8EPZBGlIY37dpr4kZCj8JW7QAfKU0fgrIzQwINVhZBpxDiCND2X1AgZCbC"
 webhookToken = "CHATBOTTOKENTEST"
 
 metaDomain = "graph.facebook.com"
