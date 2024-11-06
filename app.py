@@ -486,7 +486,7 @@ def generateMessageData(phoneNumber, messageList, messageCode, textIndex=None):
                 buttonsInContent.append(dataToAdd)
 
         messageContent = {
-            "type": messageScopeTypeToData,
+            "type": messageScopeType,
             "body":{
                 "text": messageScopeContent[0]
             },
