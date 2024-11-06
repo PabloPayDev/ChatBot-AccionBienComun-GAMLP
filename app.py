@@ -218,7 +218,8 @@ chatbotMessages = {
     "13": message020,
 }
 # ======= ======= ======= ======= =======
-# ======= ======= ======= SOME FUNCTIONS SECTION ======= ======= =======
+# ======= ======= ======= FUNCTIOS SECTIONS ======= ======= =======
+# ======= ======= JSON SERIALIZER FUN ======= =======
 def json_serializer(data):
     if isinstance(data, ObjectId):
         return str(data)
@@ -227,7 +228,8 @@ def json_serializer(data):
     if isinstance(data, dict):
         return {key: json_serializer(value) for key, value in data.items()}
     return data
-
+# ======= ======= ======= ======== =======
+# ======= ======= VERITY TOKEN FUN ======= =======
 def verificar_token(req):
     token = req.args.get('hub.verify_token')
     challenge = req.args.get('hub.challenge')
@@ -236,6 +238,63 @@ def verificar_token(req):
         return challenge
     else:
         return jsonify({'error':'Token Invalido'}),401
+# ======= ======= ======= ======== =======
+# ======= ======= GENERATE MESSAGE DATA ======= =======
+def generateMessageData(phoneNumber, messageList, messageCode, textIndex=None):
+    messageScope = messageList[messageCode]
+    messageScopeType = messageScope["type"]
+    messageScopeContent = messageScope["content"]
+
+    messageScopeTypeToData = messageScopeType if (messageScopeType != "button") else ("interactive")
+
+    # ======= DATA DEFINITION =======
+    dataToReturn = {
+        "messaging_product": "whatsapp",    
+        "recipient_type": "individual",
+        "to": phoneNumber,
+        "type": messageScopeTypeToData
+    }
+    # ======= ======= =======
+    # ======= CONTENT DEFINITION =======
+    messageContent = {}
+    if( messageScopeType == "text" ):
+        textIndex = textIndex if (textIndex is not None) else (0)
+        messageContent = { 
+            "preview_url": False,
+            "body": messageScopeContent[textIndex]
+        }
+
+    elif( messageScopeType == "button" ):
+        buttonsInContent = []
+
+        for data in messageScopeContent:
+            if isinstance(data, list):
+                dataToAdd = {
+                    "type": "reply",
+                    "reply":{
+                        "id": data[0],
+                        "title": data[1]
+                    }
+                }
+                buttonsInContent.append(dataToAdd)
+
+        messageContent = {
+            "type": messageScopeType,
+            "body":{
+                "text": messageScopeContent[0]
+            },
+            "footer":{
+                "text": messageScopeContent[1]
+            },
+            "action":{
+                "buttons":buttonsInContent
+            }
+        }
+    # ======= ======= =======
+    dataToReturn[messageScopeTypeToData] = messageContent
+    return dataToReturn
+# ======= ======= ======= ======== =======
+# ======= ======= ======= ======== ======= ======= =======
 
 flowMessageCode = ""
 # ======= ======= ======= RECEIVE MESSAGE FUNCTION ======= ======= =======
@@ -352,6 +411,23 @@ def enviar_mensajes_whatsapp(texto, numero):
         dataList.append(data)
         
     # ======= ======= ======= ======= =======
+    # ======= ======= INFORMACION DEL PROGRAMA ======= =======
+    elif( flowMessageCode=="11" ):
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode, 0)
+        dataList.append(data)
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode, 1)
+        dataList.append(data)
+    # ======= ======= ======= ======= =======
+    # ======= ======= INFORMACION DEL PROGRAMA ======= =======
+    elif( flowMessageCode=="12" ):
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode)
+        dataList.append(data)
+    # ======= ======= ======= ======= =======
+    # ======= ======= INFORMACION DEL PROGRAMA ======= =======
+    elif( flowMessageCode=="13" ):
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode)
+        dataList.append(data)
+    # ======= ======= ======= ======= =======
     # ======= ======= RECUPERAR CIUDADANO INFO SECTION ======= =======
     elif("consulta" in (texto.lower())):
         headers = {
@@ -433,60 +509,8 @@ def enviar_mensajes_whatsapp(texto, numero):
             #addMessageLog(json.dumps(e))
         finally:
             connection.close()
-# ======= ======= ======= ======= ======= ======= =======
-def generateMessageData(phoneNumber, messageList, messageCode, textIndex=None):
-    messageScope = messageList[messageCode]
-    messageScopeType = messageScope["type"]
-    messageScopeContent = messageScope["content"]
+# ======= ======= ======= ======== ======= ======= =======
 
-    messageScopeTypeToData = messageScopeType if (messageScopeType != "button") else ("interactive")
-
-    # ======= DATA DEFINITION =======
-    dataToReturn = {
-        "messaging_product": "whatsapp",    
-        "recipient_type": "individual",
-        "to": phoneNumber,
-        "type": messageScopeTypeToData
-    }
-    # ======= ======= =======
-    # ======= CONTENT DEFINITION =======
-    messageContent = {}
-    if( messageScopeType == "text" ):
-        textIndex = textIndex if (textIndex is not None) else (0)
-        messageContent = { 
-            "preview_url": False,
-            "body": messageScopeContent[textIndex]
-        }
-
-    elif( messageScopeType == "button" ):
-        buttonsInContent = []
-
-        for data in messageScopeContent:
-            if isinstance(data, list):
-                dataToAdd = {
-                    "type": "reply",
-                    "reply":{
-                        "id": data[0],
-                        "title": data[1]
-                    }
-                }
-                buttonsInContent.append(dataToAdd)
-
-        messageContent = {
-            "type": messageScopeType,
-            "body":{
-                "text": messageScopeContent[0]
-            },
-            "footer":{
-                "text": messageScopeContent[1]
-            },
-            "action":{
-                "buttons":buttonsInContent
-            }
-        }
-    # ======= ======= =======
-    dataToReturn[messageScopeTypeToData] = messageContent
-    return dataToReturn
 
 # ======= ======= ======= APP INIT SECTION ======= ======= =======
 if __name__ == '__main__':
