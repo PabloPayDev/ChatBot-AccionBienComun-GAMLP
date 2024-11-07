@@ -12,7 +12,7 @@ app = Flask(__name__)
 client = MongoClient('mongodb://localhost:27017/')
 db = client['meta_db_100J']
 
-metaToken = "EAAWXJp8ZCZCyABO5RbD3IuZBCCBM1lBgypLbsEhiZAa2hZBLP3DtjshV303kwxmLRBTYATG03OJIYaFGPIrJz5VGe9CJo4WND3DzYZBF5wL4JIfLknmJOqFXluNf45MZBEaFeWBXUlxcngoanjTZA0wyYwZB3uRVHNPQLThJdv9zGLLqvIXOox7Da9tEUnurJLRCfZAwE1oYYsUxCRTlnJwnZCZAUr5K"
+metaToken = "EAAWXJp8ZCZCyABOZCg3wHvSCd51Qu53YugEM3ixZADjGsXpQhSWHZBLMPtsxN8GyGcSERhXkGub9GJgEShKrPggO7qFu6ZAzX5sO4alQhDlmz5dhk2iBMH1TqqZAs9EdCVZBtomAXslvbVZACn5fqKYmd7CKgA8amVoB6vnlZCwE2l9mmALMwfOAQ4A8TwWTmf71VAUWZCZBa3pnNJL60rsxaZCOonasl"
 webhookToken = "CHATBOTTOKENTEST"
 
 metaDomain = "graph.facebook.com"
@@ -395,7 +395,7 @@ def recibir_mensaje(req):
                             #addMessageLog(json.dumps(e))
                         finally:
                             connection.close()
-                            
+
                     else:
                         flowMessageCode = flowMessageCode+"2"
 
