@@ -521,7 +521,7 @@ def enviar_mensajes_whatsapp(texto, numero):
     elif( (flowMessageCode=="12111") or (flowMessageCode=="12112") or (flowMessageCode=="12113") ):
         data = generateMessageData(numero, chatbotMessages, flowMessageCode)
         dataList.append(data)
-        flowMessageCode=="121111"
+        flowMessageCode="121111"
         data = generateMessageData(numero, chatbotMessages, flowMessageCode)
         dataList.append(data)
         
