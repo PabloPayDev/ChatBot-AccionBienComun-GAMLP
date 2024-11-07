@@ -261,7 +261,9 @@ def generateMessageData(phoneNumber, messageList, messageCode, customText=None):
     # ======= CONTENT DEFINITION =======
     messageContent = {}
     if( messageScopeType == "text" ):
+        app.logger.debug(customText)
         if( customText ):
+            app.logger.debug("IN")
             messageContent = { 
                 "preview_url": False,
                 "body": customText
@@ -518,6 +520,7 @@ def enviar_mensajes_whatsapp(texto, numero):
         customText = chatbotMessages[flowMessageCode]["content"][0]
         fullName = name+" "+lastName1+" "+lastName2
         customText = customText.replace("[Nombre]", fullName)
+        app.logger.debug(customText)
 
         data = generateMessageData(numero, chatbotMessages, flowMessageCode, customText)
         dataList.append(data)
