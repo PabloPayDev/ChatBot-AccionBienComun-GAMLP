@@ -4,7 +4,6 @@ from bson import ObjectId
 import pandas as pd
 from datetime import datetime
 import http.client
-import ssl
 import json
 import logging
 
@@ -13,7 +12,7 @@ app = Flask(__name__)
 client = MongoClient('mongodb://localhost:27017/')
 db = client['meta_db_100J']
 
-metaToken = "EAAWXJp8ZCZCyABO2dnXGk2iCxDeq7XUZARBB6NwOavJLOjSlq31zUSHIwAODY3y7BeBbyYw6opoZBb3Xs1PgW9rEhuni5d0V3hDELzQR55gcYJ9Wr1YZAZBxScGHo5ICDYHP6jJJjfQZCJabs3VmtiawhFIpGVUwzaGxe8EPZBGlIY37dpr4kZCj8JW7QAfKU0fgrIzQwINVhZBpxDiCND2X1AgZCbC"
+metaToken = "EAAWXJp8ZCZCyABO6mdcInhE2MsV82VSB5WtQ8CQ7t7Aplujk9ZBLQW8ZBGYbbkoZAFocBaV83nBmNkEj7nWRBZBTJiXwXzW6ZBBZA2OhQQmos9yWPi5hDTnlVmJWNxHbVu1CZCCFlYquLN5jGXzovvEwgzsSv68yZBNKdda98ZADwHZCw0ZCQg53C0hKMmSEE75ymKrwGuEyZAjc3SZBoHjRidg4fwIS6P8"
 webhookToken = "CHATBOTTOKENTEST"
 
 metaDomain = "graph.facebook.com"
@@ -61,7 +60,7 @@ chatbotMessages = {
     "test": { 
         "type": "text", 
         "content": [
-            "⏰. Procesando..."
+            "Test Message"
         ] 
     },
     "processing": { 
@@ -312,13 +311,13 @@ def recibir_mensaje(req):
         if(objeto_mensaje):
             messages = objeto_mensaje[0]
             if("type" in messages):
+                numero = messages["from"]
                 tipo = messages["type"]
                 #addMessage(json.dumps(messages))
 
                 if(flowMessageCode=="12"):
-                    text = messages["interactive"]["button_reply"]["id"]
-                    numero = messages["from"]
-                    if((len(messages["text"]["body"]) <= 12) and (messages["text"]["body"].isdigit())):
+                    text = messages["text"]["body"]
+                    if((len(text) <= 12) and (text.isdigit())):
                         flowMessageCode = flowMessageCode+"1"
                         if(messages["text"]["body"] == "10932239"):
                             flowMessageCode = flowMessageCode+"1"
@@ -329,12 +328,10 @@ def recibir_mensaje(req):
 
                 elif(tipo == "interactive"):
                     text = messages["interactive"]["button_reply"]["id"]
-                    numero = messages["from"]
                     flowMessageCode = flowMessageCode+text[-1]
 
                 elif("text" in messages):
                     text = messages["text"]["body"]
-                    numero = messages["from"]
                     flowMessageCode = flowMessageCode+"1"
 
                 enviar_mensajes_whatsapp(text, numero)
