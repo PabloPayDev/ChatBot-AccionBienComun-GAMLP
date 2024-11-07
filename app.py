@@ -121,7 +121,7 @@ chatbotMessages = {
     "1211": {
         "type": "button",
         "content": [
-            "¡Gracias! Ahora, elige una de las siguientes acciones para llevar a cabo",
+            "¡Gracias, [Nombre]! Ahora, elige una de las siguientes acciones para llevar a cabo",
             "Selecciona una de las opciones.",
             ["btnOpt1", "1️⃣. Deshierbe"],
             ["btnOpt2", "2️⃣. Limp. Aceras"],
@@ -155,7 +155,7 @@ chatbotMessages = {
     },
     "12111111": { 
         "type": "text", 
-        "content": ["¡Perfecto! [Nombre del ciudadano] aquí tienes un resumen de tu solicitud:\n\n ● Acción solicitada: [Deshierbe, limpieza de aceras o cunetas]\n ● C.I.: [Número]\n ● Nombre: [Nombre del ciudadano]\n ● Ubicación: [Dirección ingresada]\n ● Foto: [Imagen adjunta/Sin imagen adjunta]"] 
+        "content": ["¡Perfecto! [Nombre] aquí tienes un resumen de tu solicitud:\n\n ● Acción solicitada: [Deshierbe, limpieza de aceras o cunetas]\n ● C.I.: [Número]\n ● Nombre: [Nombre del ciudadano]\n ● Ubicación: [Dirección ingresada]\n ● Foto: [Imagen adjunta/Sin imagen adjunta]"] 
     },
     "1212": {
         "type": "button",
@@ -206,7 +206,11 @@ reducedMessageCodes = {
 
 specialMessageCodes = [
     "1",
-    "11"
+    "11",
+    "1211",
+    "12111",
+    "12112",
+    "12113"
 ]
 # ======= ======= ======= ======= =======
 # ======= ======= ======= FUNCTIOS SECTIONS ======= ======= =======
@@ -239,7 +243,7 @@ def reduceMessageCode(messageCode):
 
 # ======= ======= ======= ======== =======
 # ======= ======= GENERATE MESSAGE DATA ======= =======
-def generateMessageData(phoneNumber, messageList, messageCode):
+def generateMessageData(phoneNumber, messageList, messageCode, customText=None):
     messageScope = messageList[messageCode]
     messageScopeType = messageScope["type"]
     messageScopeContent = messageScope["content"]
@@ -257,10 +261,16 @@ def generateMessageData(phoneNumber, messageList, messageCode):
     # ======= CONTENT DEFINITION =======
     messageContent = {}
     if( messageScopeType == "text" ):
-        messageContent = { 
-            "preview_url": False,
-            "body": messageScopeContent[0]
-        }
+        if( customText ):
+            messageContent = { 
+                "preview_url": False,
+                "body": customText
+            }
+        else:
+            messageContent = { 
+                "preview_url": False,
+                "body": messageScopeContent[0]
+            }
 
     elif( messageScopeType == "button" ):
         buttonsInContent = []
@@ -293,11 +303,24 @@ def generateMessageData(phoneNumber, messageList, messageCode):
     return dataToReturn
 # ======= ======= ======= ======== =======
 # ======= ======= ======= ======== ======= ======= =======
+number = ""
+ci = ""
+name = ""
+lastName1 = ""
+lastName2 = ""
+reqAction = ""
+location = ""
+media = ""
 
 flowMessageCode = ""
 # ======= ======= ======= RECEIVE MESSAGE FUNCTION ======= ======= =======
 def recibir_mensaje(req):
     global flowMessageCode
+
+    global name
+    global lastName1
+    global lastName2
+
     try:
         req = request.get_json()
 
@@ -320,6 +343,9 @@ def recibir_mensaje(req):
                     if((len(text) <= 12) and (text.isdigit())):
                         flowMessageCode = flowMessageCode+"1"
                         if(messages["text"]["body"] == "10932239"):
+                            name = "Pablo"
+                            lastName1 = "Becerra"
+                            lastName2 = "Vargas"
                             flowMessageCode = flowMessageCode+"1"
                         else:
                             flowMessageCode = flowMessageCode+"2"
@@ -351,6 +377,10 @@ def enviar_mensajes_whatsapp(texto, numero):
     global chatbotMessages
     global specialMessageCodes
     global flowMessageCode
+
+    global name
+    global lastName1
+    global lastName2
 
     dataList = []
     flowMessageCode = reduceMessageCode(flowMessageCode)
@@ -483,6 +513,21 @@ def enviar_mensajes_whatsapp(texto, numero):
         dataList.append(data)
         data = generateMessageData(numero, chatbotMessages, flowMessageCode+"b")
         dataList.append(data)
+
+    elif( flowMessageCode=="1211" ):
+        customText = chatbotMessages[flowMessageCode]["content"]
+        fullName = name+" "+lastName1+" "+lastName2
+        customText = customText.replace("[Nombre]", fullName)
+
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode, customText)
+        dataList.append(data)
+
+    elif( (flowMessageCode=="12111") or (flowMessageCode=="12112") or (flowMessageCode=="12113") ):
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode)
+        dataList.append(data)
+        flowMessageCode=="121111"
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode)
+        dataList.append(data)
         
     # ======= ======= ======= ======= =======
     # ======= ======= ======= ======= =======
@@ -508,8 +553,6 @@ def enviar_mensajes_whatsapp(texto, numero):
         finally:
             connection.close()
 # ======= ======= ======= ======== ======= ======= =======
-
-
 # ======= ======= ======= APP INIT SECTION ======= ======= =======
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=80,debug=True)
