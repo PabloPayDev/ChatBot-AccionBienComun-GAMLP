@@ -263,6 +263,7 @@ def generateMessageData(phoneNumber, messageList, messageCode, customText=None):
     if( messageScopeType == "text" ):
         app.logger.debug("Recv:")
         app.logger.debug(customText)
+        app.logger.debug(messageScopeContent[0])
         if( customText ):
             app.logger.debug("IN")
             messageContent = { 
