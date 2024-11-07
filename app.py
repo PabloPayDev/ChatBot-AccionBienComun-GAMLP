@@ -155,7 +155,11 @@ chatbotMessages = {
     },
     "12111111": { 
         "type": "text", 
-        "content": ["¡Perfecto! [Nombre] aquí tienes un resumen de tu solicitud:\n\n ● Acción solicitada: [Deshierbe, limpieza de aceras o cunetas]\n ● C.I.: [Número]\n ● Nombre: [Nombre del ciudadano]\n ● Ubicación: [Dirección ingresada]\n ● Foto: [Imagen adjunta/Sin imagen adjunta]"] 
+        "content": ["Por favor, envíenos la foto o video."] 
+    },
+    "121111111": { 
+        "type": "text", 
+        "content": ["¡Perfecto! [Nombre] aquí tienes un resumen de tu solicitud:\n\n ● Acción solicitada: [Accion]\n ● C.I.: [Número]\n ● Nombre: [Nombre]\n ● Ubicación: [Ubicacion]\n ● Foto: [Imagen]"] 
     },
     "1212": {
         "type": "button",
@@ -200,6 +204,7 @@ reducedMessageCodes = {
     "111": "12",
     "122": "12",
     "12122": "112",
+    "12111112":"121111111",
     "1212111111": "1211",
     "113": "13",
 }
@@ -578,7 +583,7 @@ def enviar_mensajes_whatsapp(texto, numero):
     elif( (flowMessageCode=="12111") or (flowMessageCode=="12112") or (flowMessageCode=="12113") ):
         data = generateMessageData(numero, chatbotMessages, flowMessageCode)
         dataList.append(data)
-        flowMessageCode = flowMessageCode+"1"
+        flowMessageCode = flowMessageCode[0:-1]+"11"
         data = generateMessageData(numero, chatbotMessages, flowMessageCode)
         dataList.append(data)
         
