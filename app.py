@@ -377,9 +377,9 @@ def recibir_mensaje(req):
                                     if(response.status == 200):
                                         app.logger.debug("CI RESP")
                                         data = response.read().decode('utf-8')
-                                        json_data = json.loads(data)
-                                        if(is_json(json_data)):
+                                        if(is_json(data)):
                                             app.logger.debug("VALID CI")
+                                            json_data = json.loads(data)
                                             flowMessageCode = flowMessageCode+"1"
                                             
                                             name = json_data["success"]["nombres"]
@@ -390,10 +390,13 @@ def recibir_mensaje(req):
                                     else:
                                         flowMessageCode = flowMessageCode+"2"
                                 except Exception as e:
+                                    flowMessageCode = flowMessageCode+"2"
                                     app.logger.error(f"Error en el envío de mensaje: {str(e)}")
                             else:
+                                flowMessageCode = flowMessageCode+"2"
                                 print(f"Error en la solicitud: {response.status} {response.reason}")
                         except Exception as e:
+                            flowMessageCode = flowMessageCode+"2"
                             app.logger.error(f"Error en el envío de mensaje: {str(e)}")
                             #addMessageLog(json.dumps(e))
                         finally:
