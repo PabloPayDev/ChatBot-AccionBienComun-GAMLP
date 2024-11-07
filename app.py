@@ -515,7 +515,7 @@ def enviar_mensajes_whatsapp(texto, numero):
         dataList.append(data)
 
     elif( flowMessageCode=="1211" ):
-        customText = chatbotMessages[flowMessageCode]["content"]
+        customText = chatbotMessages[flowMessageCode]["content"][0]
         fullName = name+" "+lastName1+" "+lastName2
         customText = customText.replace("[Nombre]", fullName)
 
