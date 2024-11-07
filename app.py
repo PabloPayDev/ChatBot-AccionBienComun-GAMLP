@@ -248,6 +248,8 @@ def generateMessageData(phoneNumber, messageList, messageCode, customText=None):
     messageScopeType = messageScope["type"]
     messageScopeContent = messageScope["content"]
 
+    messageFinalText = messageScopeContent[0] if(not customText) else (customText)
+
     messageScopeTypeToData = messageScopeType if (messageScopeType != "button") else ("interactive")
 
     # ======= DATA DEFINITION =======
@@ -261,20 +263,10 @@ def generateMessageData(phoneNumber, messageList, messageCode, customText=None):
     # ======= CONTENT DEFINITION =======
     messageContent = {}
     if( messageScopeType == "text" ):
-        app.logger.debug("Recv:")
-        app.logger.debug(customText)
-        app.logger.debug(messageScopeContent[0])
-        if( customText ):
-            app.logger.debug("IN")
-            messageContent = { 
-                "preview_url": False,
-                "body": customText
-            }
-        else:
-            messageContent = { 
-                "preview_url": False,
-                "body": messageScopeContent[0]
-            }
+        messageContent = { 
+            "preview_url": False,
+            "body": messageFinalText
+        }
 
     elif( messageScopeType == "button" ):
         buttonsInContent = []
@@ -293,7 +285,7 @@ def generateMessageData(phoneNumber, messageList, messageCode, customText=None):
         messageContent = {
             "type": messageScopeType,
             "body":{
-                "text": messageScopeContent[0]
+                "text": messageFinalText
             },
             "footer":{
                 "text": messageScopeContent[1]
@@ -521,10 +513,7 @@ def enviar_mensajes_whatsapp(texto, numero):
         customText = chatbotMessages[flowMessageCode]["content"][0]
         fullName = name+" "+lastName1+" "+lastName2
         customText = customText.replace("[Nombre]", fullName)
-        app.logger.debug("Send:")
-        app.logger.debug(customText)
 
-        data = generateMessageData(numero, chatbotMessages, flowMessageCode)
         data = generateMessageData(numero, chatbotMessages, flowMessageCode, customText)
         dataList.append(data)
 
