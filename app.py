@@ -358,6 +358,7 @@ def recibir_mensaje(req):
                             connection.request("POST", gamlpPathGetToken, data, headers)
                             response = connection.getresponse()
                             if(response.status == 200):
+                                app.logger.debug("TOKEN GETTED")
                                 data = response.read().decode('utf-8')
                                 json_data = json.loads(data)
                                 gamlpToken = json_data["token"]
@@ -374,9 +375,11 @@ def recibir_mensaje(req):
                                     connection.request("POST", gamlpPathGetCiudadano, dataGetCiudadano, headers)
                                     response = connection.getresponse()
                                     if(response.status == 200):
+                                        app.logger.debug("CI RESP")
                                         data = response.read().decode('utf-8')
                                         json_data = json.loads(data)
                                         if(is_json(json_data)):
+                                            app.logger.debug("VALID CI")
                                             flowMessageCode = flowMessageCode+"1"
                                             
                                             name = json_data["success"]["nombres"]
