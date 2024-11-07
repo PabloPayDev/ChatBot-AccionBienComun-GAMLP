@@ -214,6 +214,12 @@ specialMessageCodes = [
 ]
 # ======= ======= ======= ======= =======
 # ======= ======= ======= FUNCTIOS SECTIONS ======= ======= =======
+def is_json(string):
+    try:
+        json.loads(string)
+        return True
+    except ValueError:
+        return False
 # ======= ======= JSON SERIALIZER FUN ======= =======
 def json_serializer(data):
     if isinstance(data, ObjectId):
@@ -338,13 +344,58 @@ def recibir_mensaje(req):
                     text = messages["text"]["body"]
                     if((len(text) <= 12) and (text.isdigit())):
                         flowMessageCode = flowMessageCode+"1"
-                        if(messages["text"]["body"] == "10932239"):
-                            name = "Pablo"
-                            lastName1 = "Becerra"
-                            lastName2 = "Vargas"
-                            flowMessageCode = flowMessageCode+"1"
-                        else:
-                            flowMessageCode = flowMessageCode+"2"
+
+                        headers = {
+                            "Content-Type" : "application/json"
+                        }
+                        data = {
+                            "usuario": gamlpUser,
+                            "clave": gamlpPass
+                        }
+                        data = json.dumps(data)
+                        connection = http.client.HTTPConnection(gamlpDomain, gamlpPort)
+                        try:
+                            connection.request("POST", gamlpPathGetToken, data, headers)
+                            response = connection.getresponse()
+                            if(response.status == 200):
+                                data = response.read().decode('utf-8')
+                                json_data = json.loads(data)
+                                gamlpToken = json_data["token"]
+
+                                try:
+                                    dataGetCiudadano = {
+                                        "ci": text
+                                    }
+                                    headers = {
+                                        "Content-Type" : "application/json",
+                                        "Authorization": "Bearer "+gamlpToken
+                                    }
+                                    dataGetCiudadano = json.dumps(dataGetCiudadano)
+                                    connection.request("POST", gamlpPathGetCiudadano, dataGetCiudadano, headers)
+                                    response = connection.getresponse()
+                                    if(response.status == 200):
+                                        data = response.read().decode('utf-8')
+                                        json_data = json.loads(data)
+                                        if(is_json(json_data)):
+                                            flowMessageCode = flowMessageCode+"1"
+                                            
+                                            name = json_data["success"]["nombres"]
+                                            lastName1 = json_data["success"]["paterno"]
+                                            lastName2 = json_data["success"]["materno"]
+                                        else:
+                                            flowMessageCode = flowMessageCode+"2"        
+                                    else:
+                                        flowMessageCode = flowMessageCode+"2"
+                                except Exception as e:
+                                    app.logger.error(f"Error en el envío de mensaje: {str(e)}")
+                            else:
+                                print(f"Error en la solicitud: {response.status} {response.reason}")
+                        except Exception as e:
+                            app.logger.error(f"Error en el envío de mensaje: {str(e)}")
+                            #addMessageLog(json.dumps(e))
+                        finally:
+                            connection.close()
+                            
                     else:
                         flowMessageCode = flowMessageCode+"2"
 
@@ -521,7 +572,7 @@ def enviar_mensajes_whatsapp(texto, numero):
     elif( (flowMessageCode=="12111") or (flowMessageCode=="12112") or (flowMessageCode=="12113") ):
         data = generateMessageData(numero, chatbotMessages, flowMessageCode)
         dataList.append(data)
-        flowMessageCode="121111"
+        flowMessageCode = flowMessageCode+"1"
         data = generateMessageData(numero, chatbotMessages, flowMessageCode)
         dataList.append(data)
         
