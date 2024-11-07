@@ -507,6 +507,7 @@ def enviar_mensajes_whatsapp(texto, numero):
     elif( flowMessageCode=="11" ):
         data = generateMessageData(numero, chatbotMessages, flowMessageCode+"t")
         dataList.append(data)
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode+"b")
         dataList.append(data)
 
     elif( flowMessageCode=="1211" ):
