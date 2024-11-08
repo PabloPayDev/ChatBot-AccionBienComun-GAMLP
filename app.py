@@ -631,8 +631,7 @@ def enviar_mensajes_whatsapp(texto, numero):
         customText = customText.replace("[Nombre]", fullName)
         customText = customText.replace("[Accion]", reqAction)
         customText = customText.replace("[Ubicacion]", location)
-        imgText = ""
-        customText = customText.replace("[Imagen]", imgText)
+        customText = customText.replace("[Imagen]", media)
 
         data = generateMessageData(numero, chatbotMessages, flowMessageCode, customText)
         dataList.append(data)
