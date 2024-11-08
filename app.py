@@ -147,19 +147,32 @@ chatbotMessages = {
     "1211111": {
         "type": "button",
         "content": [
+            "Para ayudarnos a identificar el lugar exacto, ¿podrías compartirnos la ubicación georreferenciada del sitio?",
+            "Selecciona una de las opciones.",
+            ["btnOpt1", "1️⃣. Enviar Ubicacion"],
+            ["btnOpt2", "2️⃣. No enviar"]
+        ]
+    },
+    "12111111": { 
+        "type": "text", 
+        "content": ["Por favor, envíenos la ubicacion georeferenciada."] 
+    },
+    "121111111": {
+        "type": "button",
+        "content": [
             "Si tienes alguna fotografía o video del lugar, sería genial que los compartas con nosotros para que podamos entender mejor la situación.",
             "Selecciona una de las opciones.",
             ["btnOpt1", "1️⃣. Enviar Foto/Video"],
             ["btnOpt2", "2️⃣. No enviar"]
         ]
     },
-    "12111111": { 
+    "1211111111": { 
         "type": "text", 
         "content": ["Por favor, envíenos la foto o video."] 
     },
-    "121111111": { 
+    "12111111111": { 
         "type": "text", 
-        "content": ["¡Perfecto! [Nombre] aquí tienes un resumen de tu solicitud:\n\n ● Acción solicitada: [Accion]\n ● C.I.: [Número]\n ● Nombre: [Nombre]\n ● Ubicación: [Ubicacion]\n ● Foto: [Imagen]"] 
+        "content": ["¡Perfecto! [Nombre] aquí tienes un resumen de tu solicitud:\n\n ● Acción solicitada: [Accion]\n ● C.I.: [Numero]\n ● Nombre: [Nombre]\n ● Ubicación: [Ubicacion]\n ● Foto: [Imagen]"] 
     },
     "1212": {
         "type": "button",
@@ -215,7 +228,8 @@ specialMessageCodes = [
     "1211",
     "12111",
     "12112",
-    "12113"
+    "12113",
+    "12111111111"
 ]
 # ======= ======= ======= ======= =======
 # ======= ======= ======= FUNCTIOS SECTIONS ======= ======= =======
@@ -324,9 +338,13 @@ flowMessageCode = ""
 def recibir_mensaje(req):
     global flowMessageCode
 
+    global ci
     global name
     global lastName1
     global lastName2
+    global reqAction
+    global location
+    global media
 
     try:
         req = request.get_json()
@@ -344,8 +362,24 @@ def recibir_mensaje(req):
                 numero = messages["from"]
                 tipo = messages["type"]
                 #addMessage(json.dumps(messages))
+                
+                if( flowMessageCode=="1211" ):
+                    text = messages["interactive"]["button_reply"]["id"]
+                    reqAction = "Deshierbe" if (text[-1] == "1") else (reqAction)
+                    reqAction = "Limpieza de aceras" if (text[-1] == "2") else (reqAction)
+                    reqAction = "Limpieza de cunetas" if (text[-1] == "3") else (reqAction)
+                    
+                elif( flowMessageCode=="121111" ):
+                    text = messages["text"]["body"]
+                    location = text
 
-                if(flowMessageCode=="12"):
+                elif( flowMessageCode=="121111111" ):
+                    text = messages["interactive"]["button_reply"]["id"]
+                    media = "Imagen enviada" if (text[-1] == "1") else (media)
+                    media = "Sin imagen" if (text[-1] == "2") else (media)
+
+
+                if( flowMessageCode=="12" ):
                     text = messages["text"]["body"]
                     if((len(text) <= 12) and (text.isdigit())):
                         flowMessageCode = flowMessageCode+"1"
@@ -368,35 +402,32 @@ def recibir_mensaje(req):
                                 json_data = json.loads(data)
                                 gamlpToken = json_data["token"]
 
-                                try:
-                                    dataGetCiudadano = {
-                                        "ci": text
-                                    }
-                                    headers = {
-                                        "Content-Type" : "application/json",
-                                        "Authorization": "Bearer "+gamlpToken
-                                    }
-                                    dataGetCiudadano = json.dumps(dataGetCiudadano)
-                                    connection.request("POST", gamlpPathGetCiudadano, dataGetCiudadano, headers)
-                                    response = connection.getresponse()
-                                    if(response.status == 200):
-                                        app.logger.debug("CI RESP")
-                                        data = response.read().decode('utf-8')
-                                        if(is_json(data)):
-                                            app.logger.debug("VALID CI")
-                                            json_data = json.loads(data)
-                                            flowMessageCode = flowMessageCode+"1"
-                                            
-                                            name = json_data["success"]["nombres"]
-                                            lastName1 = json_data["success"]["paterno"]
-                                            lastName2 = json_data["success"]["materno"]
-                                        else:
-                                            flowMessageCode = flowMessageCode+"2"        
+                                dataGetCiudadano = {
+                                    "ci": text
+                                }
+                                headers = {
+                                    "Content-Type" : "application/json",
+                                    "Authorization": "Bearer "+gamlpToken
+                                }
+                                dataGetCiudadano = json.dumps(dataGetCiudadano)
+                                connection.request("POST", gamlpPathGetCiudadano, dataGetCiudadano, headers)
+                                response = connection.getresponse()
+                                if(response.status == 200):
+                                    app.logger.debug("CI RESP")
+                                    data = response.read().decode('utf-8')
+                                    if(is_json(data)):
+                                        app.logger.debug("VALID CI")
+                                        json_data = json.loads(data)
+                                        flowMessageCode = flowMessageCode+"1"
+                                        
+                                        ci = text
+                                        name = json_data["success"]["nombres"]
+                                        lastName1 = json_data["success"]["paterno"]
+                                        lastName2 = json_data["success"]["materno"]
                                     else:
-                                        flowMessageCode = flowMessageCode+"2"
-                                except Exception as e:
+                                        flowMessageCode = flowMessageCode+"2"        
+                                else:
                                     flowMessageCode = flowMessageCode+"2"
-                                    app.logger.error(f"Error en el envío de mensaje: {str(e)}")
                             else:
                                 flowMessageCode = flowMessageCode+"2"
                                 print(f"Error en la solicitud: {response.status} {response.reason}")
@@ -436,9 +467,13 @@ def enviar_mensajes_whatsapp(texto, numero):
     global specialMessageCodes
     global flowMessageCode
 
+    global ci
     global name
     global lastName1
     global lastName2
+    global reqAction
+    global location
+    global media
 
     dataList = []
     flowMessageCode = reduceMessageCode(flowMessageCode)
@@ -585,6 +620,20 @@ def enviar_mensajes_whatsapp(texto, numero):
         dataList.append(data)
         flowMessageCode = flowMessageCode[0:-1]+"11"
         data = generateMessageData(numero, chatbotMessages, flowMessageCode)
+        dataList.append(data)
+
+    elif( flowMessageCode=="12111111111" ):
+        customText = chatbotMessages[flowMessageCode]["content"][0]
+        
+        customText = customText.replace("[Numero]", ci)
+        fullName = name+" "+lastName1+" "+lastName2
+        customText = customText.replace("[Nombre]", fullName)
+        customText = customText.replace("[Accion]", reqAction)
+        customText = customText.replace("[Ubicacion]", location)
+        imgText = ""
+        customText = customText.replace("[Imagen]", imgText)
+
+        data = generateMessageData(numero, chatbotMessages, flowMessageCode, customText)
         dataList.append(data)
         
     # ======= ======= ======= ======= =======
