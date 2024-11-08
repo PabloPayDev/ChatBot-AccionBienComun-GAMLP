@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from pymongo import MongoClient
 from bson import ObjectId
 import pandas as pd
-from datetime import datetime
+from datetime import date, datetime
 import http.client
 import json
 import logging
@@ -12,7 +12,7 @@ app = Flask(__name__)
 client = MongoClient('mongodb://localhost:27017/')
 db = client['meta_db_100J']
 
-metaToken = "EAAWXJp8ZCZCyABOzxbn8lx7rxF459JzIXHgHP3h7WZA3ofGptR2nBfoXeTSzv6up7cIMD9ZAdEFG9EZCYJWaj8HKhTwbwjsr5B42BUbhVnXxYgZB4byO88bSZChnDm5RhHTD0UZA3Az4VYesT1Ybd0ocZBj6GDZCKzrgTK2GBsLXLtcWJuxSAnj3F7qbs8q32WS8t1Qvkd7pDY0i0KX7dDTNAHa4G5"
+metaToken = "EAAWXJp8ZCZCyABOZByjZAHSIETCa8aTi7w10a9ZBMakD7c7Q1HHVqv2ncweWe5Hq6qf1rN9eKpZC0ocv7gDqyPcrReivMZBL7BumjJtBwsJb7YOSQI12pmoTHAIu5tMGqjqb3cQQkekBbOSWH2CE7CnKcs2IGBULqva3Qg6MDbBYtG9Yjfncslzou92vnFI3rT6uoJfnpHEZAQlKZB18ZCUKJ9e3lN0gZDZD"
 webhookToken = "CHATBOTTOKENTEST"
 
 metaDomain = "graph.facebook.com"
@@ -398,7 +398,6 @@ def recibir_mensaje(req):
                             connection.request("POST", gamlpPathGetToken, data, headers)
                             response = connection.getresponse()
                             if(response.status == 200):
-                                app.logger.debug("TOKEN GETTED")
                                 data = response.read().decode('utf-8')
                                 json_data = json.loads(data)
                                 gamlpToken = json_data["token"]
@@ -414,10 +413,8 @@ def recibir_mensaje(req):
                                 connection.request("POST", gamlpPathGetCiudadano, dataGetCiudadano, headers)
                                 response = connection.getresponse()
                                 if(response.status == 200):
-                                    app.logger.debug("CI RESP")
                                     data = response.read().decode('utf-8')
                                     if(is_json(data)):
-                                        app.logger.debug("VALID CI")
                                         json_data = json.loads(data)
                                         flowMessageCode = flowMessageCode+"1"
                                         
@@ -508,65 +505,6 @@ def enviar_mensajes_whatsapp(texto, numero):
         data = generateMessageData(numero, chatbotMessages, "test")
         dataList.append(data)
     # ======= ======= ======= ======= =======
-    # ======= ======= RECUPERAR CIUDADANO INFO SECTION ======= =======
-    elif("consulta" in (texto.lower())):
-        headers = {
-            "Content-Type" : "application/json"
-        }
-        data = {
-            "usuario": gamlpUser,
-            "clave": gamlpPass
-        }
-        data = json.dumps(data)
-        connection = http.client.HTTPConnection(gamlpDomain, gamlpPort)
-        try:
-            connection.request("POST", gamlpPathGetToken, data, headers)
-            response = connection.getresponse()
-            if(response.status == 200):
-                data = response.read().decode('utf-8')
-                json_data = json.loads(data)
-                gamlpToken = json_data["token"]
-
-                nombres = "Default"
-
-                try:
-                    dataGetCiudadano = {
-                        "ci": "6834512"
-                    }
-                    headers = {
-                        "Content-Type" : "application/json",
-                        "Authorization": "Bearer "+gamlpToken
-                    }
-                    dataGetCiudadano = json.dumps(dataGetCiudadano)
-                    connection.request("POST", gamlpPathGetCiudadano, dataGetCiudadano, headers)
-                    response = connection.getresponse()
-                    if(response.status == 200):
-                        data = response.read().decode('utf-8')
-                        json_data = json.loads(data)
-                        nombres = json_data["success"]["nombres"]+" "+json_data["success"]["paterno"]+" "+json_data["success"]["materno"]
-        
-                        data = {
-                            "messaging_product": "whatsapp",    
-                            "recipient_type": "individual",
-                            "to": numero,
-                            "type": "text",
-                            "text": {
-                                "preview_url": False,
-                                "body": nombres
-                            }
-                        }
-                        dataList.append(data)
-
-                except Exception as e:
-                    app.logger.error(f"Error en el envío de mensaje: {str(e)}")
-            else:
-                print(f"Error en la solicitud: {response.status} {response.reason}")
-        except Exception as e:
-            app.logger.error(f"Error en el envío de mensaje: {str(e)}")
-            #addMessageLog(json.dumps(e))
-        finally:
-            connection.close()
-    # ======= ======= ======= ======= =======
     # ======= ======= SEND COMMOND FORMAT MESSAGE ======= =======
     elif( flowMessageCode not in specialMessageCodes ):
         data = generateMessageData(numero, chatbotMessages, flowMessageCode)
@@ -633,8 +571,25 @@ def enviar_mensajes_whatsapp(texto, numero):
         customText = customText.replace("[Ubicacion]", location)
         customText = customText.replace("[Imagen]", media)
 
+        try:
+            newActionRegister = {
+                "phoneNumber":numero,
+                "fullName":fullName,
+                "reqAction":reqAction,
+                "location":location,
+                "ci":ci,
+                "date":datetime.combine(date.today(), datetime.min.time())
+            }
+            collection = db['data']
+            collection.insert_one(newActionRegister)
+        except Exception as e:
+            app.logger.debug("======= ERROR GUARDANDO MENSAJE =======")
+            app.logger.debug(e)
+
         data = generateMessageData(numero, chatbotMessages, flowMessageCode, customText)
         dataList.append(data)
+
+        flowMessageCode = ""
         
     # ======= ======= ======= ======= =======
     # ======= ======= ======= ======= =======
