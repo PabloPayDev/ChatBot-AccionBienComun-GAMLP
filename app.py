@@ -4,10 +4,13 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from pymongo import MongoClient
 from bson import ObjectId
 from io import BytesIO
+import base64
 import pandas as pd
 import http.client
+import urllib.request
 import json
 import logging
+import os
 
 from messagesConfig import chatbotMessages
 from messagesConfig import reducedMessageCodes
@@ -21,7 +24,9 @@ appDB = "meta_db_100J"
 mongoDBDomain = 'mongodb://localhost:27017/'
 mongoDBPath = 'meta_db_100J'
 
-metaToken = "EAAWXJp8ZCZCyABO7eqsGWDJih9F1ZAQGcXrK5DCxgbQjugPgvPiPKYwhCpcL6VGTI3M9DbfSzJClPTuXKS6KKhmsxNqknbI6ajV0GoLMKaKx3sOUWikq23FYORYmoQE0V9sjLb2Wj8PeCJSuftjCCxbCInAF89IT6If8KayZC7EiPKBfTFvVhwlvj6T6o7GNbCHvXZACJcq2lc8z7KpcbbzB8AQZDZD"
+imageDirPath = "imagesReceived"
+
+metaToken = "EAAWXJp8ZCZCyABO2UAvo5AKCUIVC6sZAG3fsNMEnJNolcjl3FyuItaWoBBp48w2vx1PWiiuvS2kpJVH8dZCS5qdBDBgv7W7aZBs1DzOctDdu7Gxon5AvcYhSAGxJ70hRTeabMY1VOHT1yZBHwVqRohIJdbsV6PsoOyL0P71W8W4mZBitlxzKC3JW8hGE10578yGb9USy0H3ZCDOcRNkPrfemYMMX"
 webhookToken = "CHATBOTTOKENTEST"
 
 metaDomain = "graph.facebook.com"
@@ -34,6 +39,7 @@ gamlpDomain = "131.0.0.17"
 gamlpPort = 8008
 gamlpPathGetToken = "/wsPC/obtTokenGamlp"
 gamlpPathGetCiudadano = "/wsPC/obtCiudadano"
+gamlpPathCreateCiudadano = "/wsPC/crearCiudadano"
 gamlpUser = "gamlpforo"
 gamlpPass = "g4m4lpf0r0of2022"
 gamlpToken = ""
@@ -77,11 +83,10 @@ def download_excel():
 # ======= ======= ======= FUNCTIOS SECTIONS ======= ======= =======
 # ======= ======= CLEANUP EXPIRED MESSAGE SESSIONS ======= =======
 def cleanup_expired_sessions():
-    app.logger.debug("======= CLEANNING UP INITED =======")
     current_time = datetime.now()
     expired_users = []
     for phoneNumber, userData in session_store.items():
-        expiration_time = userData["lastAnswerDatetime"] + timedelta(minutes=15)
+        expiration_time = userData["lastAnswerDatetime"] + timedelta(minutes=10)
         if (current_time >= expiration_time):
             expired_users.append(phoneNumber)
 
@@ -89,9 +94,9 @@ def cleanup_expired_sessions():
         data = generateMessageData(phoneNumber, chatbotMessages, "timeout")
         data = json.dumps(data)
         headers = {
-                    "Content-Type" : "application/json",
-                    "Authorization": "Bearer "+metaToken
-                }
+            "Content-Type" : "application/json",
+            "Authorization": "Bearer "+metaToken
+        }
 
         connection = http.client.HTTPSConnection(metaDomain)
         try:
@@ -149,7 +154,7 @@ def generateMessageData(phoneNumber, messageList, messageCode, customText=None):
 
     messageFinalText = messageScopeContent[0] if(not customText) else (customText)
 
-    messageScopeTypeToData = messageScopeType if (messageScopeType != "button") else ("interactive")
+    messageScopeTypeToData = messageScopeType if (messageScopeType == "text") else ("interactive")
 
     # ======= DATA DEFINITION =======
     dataToReturn = {
@@ -193,6 +198,49 @@ def generateMessageData(phoneNumber, messageList, messageCode, customText=None):
                 "buttons":buttonsInContent
             }
         }
+
+    elif( messageScopeType == "list" ):
+        buttonsInContent = []
+
+        for data in messageScopeContent:
+            if isinstance(data, list):
+                dataToAdd = {
+                    "id": data[0],
+                    "title": data[1],
+                    "description":data[2]
+                }
+                
+                buttonsInContent.append(dataToAdd)
+
+        messageContent = {
+            "type": messageScopeType,
+            "body":{
+                "text": messageFinalText
+            },
+            "footer":{
+                "text": messageScopeContent[1]
+            },
+            "action":{
+                "button":messageScopeContent[2],
+                "sections":[
+                    {
+                        "title": "",
+                        "rows": buttonsInContent
+                    }
+                ]
+            }
+        }
+
+    elif( messageScopeType == "location_request_message" ):
+        messageContent = { 
+            "type": messageScopeType,
+            "body": {
+                "text": messageFinalText
+            },
+            "action":{
+                "name": "send_location"
+            }
+        }
     # ======= ======= =======
     dataToReturn[messageScopeTypeToData] = messageContent
     return dataToReturn
@@ -208,6 +256,9 @@ def create_new_session_user(phoneNumber):
         "reqAction": "",
         "location": "",
         "media": "",
+        "mediaId":"",
+        "latitud":"",
+        "longitud":"",
         "lastAnswerDatetime":datetime.now()
     }
     session_store[phoneNumber] = userData
@@ -236,8 +287,6 @@ def recibir_mensaje(req):
                 app.logger.debug("============")
                 app.logger.debug("PRE MESSAGE CODE: "+phoneNumberData["flowMessageCode"])
                 app.logger.debug("============")
-
-                #addMessage(json.dumps(messages))
                 
                 # ======= SAVING SPECIAL DATA SENDED =======
                 if( phoneNumberData["flowMessageCode"]=="1211" ):
@@ -250,14 +299,71 @@ def recibir_mensaje(req):
                     text = messages["text"]["body"]
                     phoneNumberData["location"] = text
 
+                elif( phoneNumberData["flowMessageCode"]=="12111111" ):
+                    phoneNumberData["latitude"] = messages["location"]["latitude"]
+                    phoneNumberData["longitude"] = messages["location"]["longitude"]
+
                 elif( phoneNumberData["flowMessageCode"]=="121111111" ):
                     text = messages["interactive"]["button_reply"]["id"]
                     phoneNumberData["media"] = "Imagen enviada" if (text[-1] == "1") else (phoneNumberData["media"])
                     phoneNumberData["media"] = "Sin imagen" if (text[-1] == "2") else (phoneNumberData["media"])
+
+                elif( phoneNumberData["flowMessageCode"]=="1211111111" ):
+                    imageId = messages["image"]['id']
+                    imageUrl = "/v20.0/"+imageId
+                    if not os.path.exists(imageDirPath):
+                        os.makedirs(imageDirPath)
+                    conn = http.client.HTTPSConnection(metaDomain)
+                    headers = {
+                        "Authorization": "Bearer "+metaToken
+                    }
+                    conn.request("GET", imageUrl, headers=headers)
+                    response = conn.getresponse()
+                    if(response.status == 200):
+                        imageData = json.loads(response.read())
+                        imageDataUrl = imageData["url"]
+                        file_path = os.path.join(imageDirPath, imageId+'.jpg')
+                        try:
+                            requestImg = urllib.request.Request(imageDataUrl, headers=headers)
+                            with urllib.request.urlopen(requestImg) as responseImg:
+                                imageRes = responseImg.read()
+                                with open(file_path, 'wb') as f:
+                                    f.write(imageRes)
+                                    phoneNumberData["mediaId"] = imageDirPath+imageId+'.jpg'
+                        except Exception as e:
+                            print(f"Download image error: {str(e)}")
+                    else:
+                        app.logger.debug(imageUrl)
+                        print(f"Getting image error: {response.status} - {response.reason}")
+
+                elif( phoneNumberData["flowMessageCode"]=="12121" ):
+                    text = messages["interactive"]["list_reply"]["id"][:-1]
+                    phoneNumberData["issued"] = text
+
+                elif( phoneNumberData["flowMessageCode"]=="121211" ):
+                    text = messages["text"]["body"]
+                    phoneNumberData["lastName1"] = text
+
+                elif( phoneNumberData["flowMessageCode"]=="1212111" ):
+                    text = messages["text"]["body"]
+                    phoneNumberData["lastName2"] = text
+
+                elif( phoneNumberData["flowMessageCode"]=="12121111" ):
+                    text = messages["text"]["body"]
+                    phoneNumberData["name"] = text
+
+                elif( phoneNumberData["flowMessageCode"]=="121211111" ):
+                    text = messages["text"]["body"]
+                    phoneNumberData["email"] = text
+
+                elif( phoneNumberData["flowMessageCode"]=="1212111111" ):
+                    text = messages["text"]["body"]
+                    phoneNumberData["password"] = text
                 # ======= ======= =======
                 # ======= CURRENT FLOW MESSAGE UPDATE =======
                 if( phoneNumberData["flowMessageCode"]=="12" ):
                     text = messages["text"]["body"]
+                    phoneNumberData["ci"] = text
                     if((len(text) <= 12) and (text.isdigit())):
                         phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"1"
 
@@ -278,19 +384,19 @@ def recibir_mensaje(req):
                                 json_data = json.loads(data)
                                 gamlpToken = json_data["token"]
 
-                                dataGetCiudadano = {
-                                    "ci": text
-                                }
                                 headers = {
                                     "Content-Type" : "application/json",
                                     "Authorization": "Bearer "+gamlpToken
+                                }
+                                dataGetCiudadano = {
+                                    "ci": text
                                 }
                                 dataGetCiudadano = json.dumps(dataGetCiudadano)
                                 connection.request("POST", gamlpPathGetCiudadano, dataGetCiudadano, headers)
                                 response = connection.getresponse()
                                 if(response.status == 200):
                                     data = response.read().decode('utf-8')
-                                    if(is_json(data)):
+                                    if((is_json(data))and("success" in data)):
                                         json_data = json.loads(data)
                                         phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"1"
                                         
@@ -313,10 +419,59 @@ def recibir_mensaje(req):
 
                     else:
                         phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"2"
+                
+                elif( phoneNumberData["flowMessageCode"]=="1212111111" ):
+                    text = messages["text"]["body"]
+                    auth = f"gamlpforo:g4m4lpf0r0of2022"
+                    auth_bytes = auth.encode('utf-8')
+                    auth_base64 = base64.b64encode(auth_bytes).decode('utf-8')
+                    headers = {
+                        "Content-Type" : "application/json",
+                        "Authorization": f"Basic {auth_base64}"
+                    }
+                    data = {
+                        "ci":phoneNumberData["ci"],
+                        "expedido":phoneNumberData["issued"],
+                        "nombres":phoneNumberData["name"],
+                        "paterno":phoneNumberData["lastName1"],
+                        "materno":phoneNumberData["lastName2"],
+                        "telefono":"",
+                        "movil":phoneNumber,
+                        "correo":phoneNumberData["email"],
+                        "sistema":"WEB_FORO",
+                        "contrasenia":phoneNumberData["password"]
+                    }
+                    data = json.dumps(data)
+                    connection = http.client.HTTPConnection(gamlpDomain, gamlpPort)
+                    try:
+                        connection.request("POST", gamlpPathCreateCiudadano, data, headers)
+                        response = connection.getresponse()
+                        if(response.status == 200):
+                            response = response.read().decode('utf-8')
+                            response = json.loads(response)
+                            if( "success" in response):
+                                phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"1"
+                            else:
+                                phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"2"
+                        else:
+                            phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"2"
+
+                    except Exception as e:
+                        phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"2"
+                        app.logger.error(f"Error en el envío de mensaje: {str(e)}")
 
                 elif(tipo == "interactive"):
-                    text = messages["interactive"]["button_reply"]["id"]
+                    tipo_interactivo = messages["interactive"]["type"]
+                    text = messages["interactive"][tipo_interactivo]["id"]
                     phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+text[-1]
+
+                elif(tipo == "location"):
+                    text = ""
+                    phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"1"
+
+                elif(tipo == "image"):
+                    text = ""
+                    phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"1"
 
                 elif("text" in messages):
                     text = messages["text"]["body"]
@@ -399,6 +554,27 @@ def enviar_mensajes_whatsapp(texto, phoneNumber):
             data = response.read().decode('utf-8')
             json_data = json.loads(data)
             blogLastPost = json_data[0]
+
+            dateObj = datetime.strptime(blogLastPost["date"], "%Y-%m-%d %H:%M:%S")
+            formatedDate = dateObj.strftime("%A, %d de %B de %Y")
+            daysNames = {
+                'Monday': 'Lunes', 'Tuesday': 'Martes', 'Wednesday': 'Miércoles', 
+                'Thursday': 'Jueves', 'Friday': 'Viernes', 'Saturday': 'Sábado', 
+                'Sunday': 'Domingo'
+            }
+            monthsNames = {
+                'January': 'enero', 'February': 'febrero', 'March': 'marzo', 
+                'April': 'abril', 'May': 'mayo', 'June': 'junio', 'July': 'julio', 
+                'August': 'agosto', 'September': 'septiembre', 'October': 'octubre', 
+                'November': 'noviembre', 'December': 'diciembre'
+            }
+            formatedDate = formatedDate.replace(
+                dateObj.strftime("%A"), daysNames[dateObj.strftime("%A")]
+            )
+            formatedDate = formatedDate.replace(
+                dateObj.strftime("%B"), monthsNames[dateObj.strftime("%B")]
+            )
+
             data = {
                 "messaging_product": "whatsapp",
                 "recipient_type": "individual",
@@ -406,7 +582,7 @@ def enviar_mensajes_whatsapp(texto, phoneNumber):
                 "type": "image",
                 "image": {
                     "link": blogLastPost["featured_image"], 
-                    "caption": blogLastPost["title"]+"\n"+blogLastPost["date"]+"\n"+blogLastPost["link"]
+                    "caption": blogLastPost["title"]+"\n"+formatedDate+"\n"+blogLastPost["link"]
                 }
             }
             dataList.append(data)
@@ -452,9 +628,12 @@ def enviar_mensajes_whatsapp(texto, phoneNumber):
             newActionRegister = {
                 "phoneNumber":phoneNumber,
                 "fullName":fullName,
+                "ci":phoneNumberData["ci"],
                 "reqAction":phoneNumberData["reqAction"],
                 "location":phoneNumberData["location"],
-                "ci":phoneNumberData["ci"],
+                "latitude":phoneNumberData["latitude"],
+                "longitude":phoneNumberData["longitude"],
+                "mediaId":phoneNumberData["mediaId"],
                 "date":datetime.combine(date.today(), datetime.min.time())
             }
             collection = db['data']
@@ -467,14 +646,21 @@ def enviar_mensajes_whatsapp(texto, phoneNumber):
         dataList.append(data)
 
         phoneNumberData["flowMessageCode"] = ""
-        
+
+    elif( phoneNumberData["flowMessageCode"]=="12121111111"):
+        data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"])
+        dataList.append(data)
+        phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"1"
+        phoneNumberData["flowMessageCode"] = reduceMessageCode(phoneNumberData["flowMessageCode"])
+        data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"])
+        dataList.append(data)
     # ======= ======= ======= ======= =======
     # ======= ======= ======= ======= =======
     else:
         data = generateMessageData(phoneNumber, chatbotMessages, "invalid")
         dataList.append(data)
     # ======= ======= ======= ======= =======
-
+    
     for dataItem in dataList:
         dataItem = json.dumps(dataItem)
         headers = {
@@ -485,7 +671,7 @@ def enviar_mensajes_whatsapp(texto, phoneNumber):
         connection = http.client.HTTPSConnection(metaDomain)
         try:
             connection.request("POST", metaPath, dataItem, headers)
-            response = connection.getresponse()
+            response = connection.getresponse().read().decode('utf-8')
         except Exception as e:
             app.logger.error(f"Error en el envío de mensaje: {str(e)}")
             #addMessageLog(json.dumps(e))

@@ -15,17 +15,17 @@ chatbotMessages = {
     "invalid": { 
         "type": "text", 
         "content": [
-            "Parece que la información ingresada no es válida. Por favor, asegúrate de proporcionar datos correctos.",
-            "Estoy aquí para ayudarte, pero parece que hemos recibido información incorrecta varias veces. Si no puedes continuar, te sugiero que nos llames al 155 para más ayuda"
+            "❌. Parece que la información ingresada no es válida. Por favor, asegúrate de proporcionar datos correctos.",
+            "❌. Estoy aquí para ayudarte, pero parece que hemos recibido información incorrecta varias veces. Si no puedes continuar, te sugiero que nos llames al 155 para más ayuda"
         ] 
     },
     "cancel": { 
         "type": "text", 
-        "content": ["Operacion cancelada, volviendo al menu."] 
+        "content": ["❌. Operacion cancelada, volviendo al menu."] 
     },
     "timeout": { 
         "type": "text", 
-        "content": ["Tiempo de respuesta expirado, operacion cancelada."] 
+        "content": ["❌. Tiempo de respuesta expirado, operacion cancelada."] 
     },
     "1": {
         "type": "button",
@@ -101,8 +101,8 @@ chatbotMessages = {
         ]
     },
     "12111111": { 
-        "type": "text", 
-        "content": ["Por favor, envíenos la ubicacion georeferenciada."] 
+        "type": "location_request_message", 
+        "content": ["Por favor, envíenos la ubicacion georeferenciada presionando el siguiente boton."] 
     },
     "121111111": {
         "type": "button",
@@ -131,22 +131,43 @@ chatbotMessages = {
         ]
     },
     "12121": { 
-        "type": "text", 
-        "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Apellido Paterno"] 
+        "type": "list", 
+        "content": [
+            "Por favor, ingresa los siguientes datos para registrarte.\n\n Expedido",
+            "Selecciona una de las opciones.",
+            "Ver extenciones.",
+            ["LPZ1", "1️⃣. LPZ", "Expedido en La Paz"],
+            ["CBB1", "2️⃣. CBB", "Expedido en Cochabamba"],
+            ["SCZ1", "3️⃣. SCZ", "Expedido en Santa Cruz"],
+            ["CHQ1", "4️⃣. CHQ", "Expedido en Chuquisaca"],
+            ["TJA1", "5️⃣. TJA", "Expedido en Tarija"],
+            ["PTS1", "6️⃣. PTS", "Expedido en Potosí"],
+            ["ORU1", "7️⃣. ORU", "Expedido en Oruro"],
+            ["BNI1", "8️⃣. BNI", "Expedido en Beni"],
+            ["PND1", "9️⃣. PND", "Expedido en Pando"]
+        ]
     },
     "121211": { 
         "type": "text", 
-        "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Apellido Materno"] 
+        "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Apellido Paterno"] 
     },
     "1212111": { 
         "type": "text", 
-        "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Nombres"] 
+        "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Apellido Materno"] 
     },
     "12121111": { 
         "type": "text", 
-        "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Correo Electronico"] 
+        "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Nombres"] 
     },
     "121211111": { 
+        "type": "text", 
+        "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Correo Electronico"] 
+    },
+    "1212111111": { 
+        "type": "text", 
+        "content": ["Por favor, ingresa los siguientes datos para registrarte.\n\n Contraseaña a utilizar"] 
+    },
+    "12121111111": { 
         "type": "text", 
         "content": ["¡Listo! Ahora continuemos con tu solicitud."] 
     },
@@ -167,7 +188,8 @@ reducedMessageCodes = {
     "12122": "112",
     "12111112":"121111111",
     "1211111112":"12111111111",
-    "1212111111": "1211",
+    "12121111111": "1211",
+    "12121111112": "112",
     "113": "13",
 }
 # ======= ======= ======= ======= =======
@@ -179,6 +201,7 @@ specialMessageCodes = [
     "12111",
     "12112",
     "12113",
+    "12121111111",
     "12111111111"
 ]
 # ======= ======= ======= ======= =======
