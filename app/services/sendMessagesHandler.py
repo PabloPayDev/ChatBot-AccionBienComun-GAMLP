@@ -23,9 +23,6 @@ def sendMessage(texto, phoneNumber):
 
     db = current_app.config['MONGO_DB']
 
-    global chatbotMessages
-    global specialMessageCodes
-    
     phoneNumberData = current_app.config['SESSIONS_STORE'].get(phoneNumber, None)
 
     dataList = []
@@ -47,19 +44,22 @@ def sendMessage(texto, phoneNumber):
     finally:
         connection.close()
     # ======= ======= ======= ======= =======
-    # ======= ======= CANCELAR MESSAGE ======= =======
+    # ======= ======= SEND SPECIAL MESSAGE ======= =======
     if(("cancelar") in (texto.lower())):
         phoneNumberData["flowMessageCode"] = "1"
         data = generateMessageData(phoneNumber, chatbotMessages, "cancel")
         dataList.append(data)
-    # ======= ======= ======= ======= =======
-    # ======= ======= TEST MESSAGE ======= =======
-    if(("test") in (texto.lower())):
-        data = generateMessageData(phoneNumber, chatbotMessages, "test")
+    elif("invalid" == phoneNumberData["specialMessage"]):
+        if(phoneNumberData["invalidMessageCount"] < 3):
+            data = generateMessageData(phoneNumber, chatbotMessages, "invalid")
+        else:
+            data = generateMessageData(phoneNumber, chatbotMessages, "conversationOut")
+            del current_app.config['SESSIONS_STORE'][phoneNumber]
+            phoneNumberData["flowMessageCode"] = ""
         dataList.append(data)
     # ======= ======= ======= ======= =======
     # ======= ======= SEND COMMOND FORMAT MESSAGE ======= =======
-    elif( phoneNumberData["flowMessageCode"] not in specialMessageCodes ):
+    if( (phoneNumberData["flowMessageCode"])and(phoneNumberData["flowMessageCode"] not in specialMessageCodes) ):
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"])
         dataList.append(data)
     # ======= ======= ======= ======= =======
@@ -174,11 +174,6 @@ def sendMessage(texto, phoneNumber):
         phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"1"
         phoneNumberData["flowMessageCode"] = reduceMessageCode(phoneNumberData["flowMessageCode"])
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"])
-        dataList.append(data)
-    # ======= ======= ======= ======= =======
-    # ======= ======= ======= ======= =======
-    else:
-        data = generateMessageData(phoneNumber, chatbotMessages, "invalid")
         dataList.append(data)
     # ======= ======= ======= ======= =======
     for dataItem in dataList:

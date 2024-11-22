@@ -24,7 +24,7 @@ def create_app():
     # ======= ====== ======= ======= ======= ======= =======
     # ======= ====== ======= BG TASKS INIT SECTION ======= ======= =======
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=cleanup_expired_sessions, trigger="interval", minutes=1)
+    scheduler.add_job(func=(lambda: cleanup_expired_sessions(app)), trigger="interval", minutes=1)
     scheduler.start()
     # ======= ====== ======= ======= ======= ======= =======
     # ======= ====== ======= LOGGING CONFIG SECTION ======= ======= =======

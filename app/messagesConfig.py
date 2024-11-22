@@ -15,7 +15,12 @@ chatbotMessages = {
     "invalid": { 
         "type": "text", 
         "content": [
-            "❌. Parece que la información ingresada no es válida. Por favor, asegúrate de proporcionar datos correctos.",
+            "❌. Parece que la información ingresada no es válida. Por favor, asegúrate de proporcionar datos correctos."
+        ] 
+    },
+    "conversationOut": { 
+        "type": "text", 
+        "content": [
             "❌. Estoy aquí para ayudarte, pero parece que hemos recibido información incorrecta varias veces. Si no puedes continuar, te sugiero que nos llames al 155 para más ayuda"
         ] 
     },
@@ -32,9 +37,9 @@ chatbotMessages = {
         "content": [
             "¡Hola! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
             "Selecciona una de las opciones.",
-            ["btnOpt1", "1️⃣. Informacion"],
-            ["btnOpt2", "2️⃣. Solicitud"],
-            ["btnOpt3", "3️⃣. Consulta"]
+            ["btnOpt1", "Saber del programa"],
+            ["btnOpt2", "Hacer solicitud"],
+            ["btnOpt3", "Otra consulta"]
         ]
     },
     "11t": {
@@ -48,9 +53,9 @@ chatbotMessages = {
         "content": [
             "¿Te gustaría hacer una solicitud para mejorar tu entorno?",
             "Selecciona una de las opciones.",
-            ["btnOpt1", "1️⃣. Hacer solicitud"],
-            ["btnOpt2", "2️⃣. No, gracias."],
-            ["btnOpt3", "3️⃣. Otra Consulta"]
+            ["btnOpt1", "Hacer solicitud"],
+            ["btnOpt2", "No, gracias."],
+            ["btnOpt3", "Otra Consulta"]
         ]
     },
     "112": { 
@@ -70,9 +75,9 @@ chatbotMessages = {
         "content": [
             "¡Gracias, [Nombre]! Ahora, elige una de las siguientes acciones para llevar a cabo",
             "Selecciona una de las opciones.",
-            ["btnOpt1", "1️⃣. Deshierbe"],
-            ["btnOpt2", "2️⃣. Limp. Aceras"],
-            ["btnOpt3", "3️⃣. Limp. Cunetas"]
+            ["btnOpt1", "Deshierbe"],
+            ["btnOpt2", "Limpieza de Aceras"],
+            ["btnOpt3", "Limpieza de Cunetas"]
         ]
     },
     "12111": { 
@@ -96,8 +101,8 @@ chatbotMessages = {
         "content": [
             "Para ayudarnos a identificar el lugar exacto, ¿podrías compartirnos la ubicación georreferenciada del sitio?",
             "Selecciona una de las opciones.",
-            ["btnOpt1", "1️⃣. Enviar Ubicacion"],
-            ["btnOpt2", "2️⃣. No enviar"]
+            ["btnOpt1", "Enviar Ubicacion"],
+            ["btnOpt2", "No tengo ubicacion"]
         ]
     },
     "12111111": { 
@@ -109,8 +114,8 @@ chatbotMessages = {
         "content": [
             "Si tienes alguna fotografía o video del lugar, sería genial que los compartas con nosotros para que podamos entender mejor la situación.",
             "Selecciona una de las opciones.",
-            ["btnOpt1", "1️⃣. Enviar Foto/Video"],
-            ["btnOpt2", "2️⃣. No enviar"]
+            ["btnOpt1", "Enviar fotografia"],
+            ["btnOpt2", "No tengo fotografias"]
         ]
     },
     "1211111111": { 
@@ -126,8 +131,8 @@ chatbotMessages = {
         "content": [
             "No encontramos tu C.I. en nuestros registros. ¿Te gustaría registrarte?",
             "Selecciona una de las opciones.",
-            ["btnOpt1", "1️⃣. Sí, registrar"],
-            ["btnOpt2", "2️⃣. No, gracias"]
+            ["btnOpt1", "Sí, registrar"],
+            ["btnOpt2", "No, gracias"]
         ]
     },
     "12121": { 
@@ -136,15 +141,15 @@ chatbotMessages = {
             "Por favor, ingresa los siguientes datos para registrarte.\n\n Expedido",
             "Selecciona una de las opciones.",
             "Ver extenciones.",
-            ["LPZ1", "1️⃣. LPZ", "Expedido en La Paz"],
-            ["CBB1", "2️⃣. CBB", "Expedido en Cochabamba"],
-            ["SCZ1", "3️⃣. SCZ", "Expedido en Santa Cruz"],
-            ["CHQ1", "4️⃣. CHQ", "Expedido en Chuquisaca"],
-            ["TJA1", "5️⃣. TJA", "Expedido en Tarija"],
-            ["PTS1", "6️⃣. PTS", "Expedido en Potosí"],
-            ["ORU1", "7️⃣. ORU", "Expedido en Oruro"],
-            ["BNI1", "8️⃣. BNI", "Expedido en Beni"],
-            ["PND1", "9️⃣. PND", "Expedido en Pando"]
+            ["LPZ1", "LPZ", "Expedido en La Paz"],
+            ["CBB1", "CBB", "Expedido en Cochabamba"],
+            ["SCZ1", "SCZ", "Expedido en Santa Cruz"],
+            ["CHQ1", "CHQ", "Expedido en Chuquisaca"],
+            ["TJA1", "TJA", "Expedido en Tarija"],
+            ["PTS1", "PTS", "Expedido en Potosí"],
+            ["ORU1", "ORU", "Expedido en Oruro"],
+            ["BNI1", "BNI", "Expedido en Beni"],
+            ["PND1", "PND", "Expedido en Pando"]
         ]
     },
     "121211": { 
@@ -204,4 +209,12 @@ specialMessageCodes = [
     "12121111111",
     "12111111111"
 ]
+# ======= ======= ======= ======= =======
+# ======= ======= MESSAGES SPECTED ANSWERS ======= =======
+messagesExpectedAnswer = {
+    "text" : "text",
+    "button" : "button_reply",
+    "list" : "list_reply",
+    "location_request_message" : "location",
+}
 # ======= ======= ======= ======= =======

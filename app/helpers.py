@@ -12,37 +12,38 @@ from .messagesConfig import reducedMessageCodes
 
 # ======= ======= ======= FUNCTIOS SECTIONS ======= ======= =======
 # ======= ======= CLEANUP EXPIRED MESSAGE SESSIONS ======= =======
-def cleanup_expired_sessions():
-    metaToken = current_app.config['META_TOKEN']
-    metaDomain = current_app.config['META_DOMAIN']
-    metaMessagesPath =current_app.config['META_MESSAGES_PATH']
-    
-    current_time = datetime.now()
-    expired_users = []
-    for phoneNumber, userData in current_app.config['SESSIONS_STORE'].items():
-        expiration_time = userData["lastAnswerDatetime"] + timedelta(minutes=10)
-        if (current_time >= expiration_time):
-            expired_users.append(phoneNumber)
+def cleanup_expired_sessions(app_scope):
+    with app_scope.app_context():
+        metaToken = app_scope.config['META_TOKEN']
+        metaDomain = app_scope.config['META_DOMAIN']
+        metaMessagesPath = app_scope.config['META_MESSAGES_PATH']
+        
+        current_time = datetime.now()
+        expired_users = []
+        for phoneNumber, userData in app_scope.config['SESSIONS_STORE'].items():
+            expiration_time = userData["lastAnswerDatetime"] + timedelta(minutes=10)
+            if (current_time >= expiration_time):
+                expired_users.append(phoneNumber)
 
-    for phoneNumber in expired_users:
-        data = generateMessageData(phoneNumber, chatbotMessages, "timeout")
-        data = json.dumps(data)
-        headers = {
-            "Content-Type" : "application/json",
-            "Authorization": "Bearer "+metaToken
-        }
+        for phoneNumber in expired_users:
+            data = generateMessageData(phoneNumber, chatbotMessages, "timeout")
+            data = json.dumps(data)
+            headers = {
+                "Content-Type" : "application/json",
+                "Authorization": "Bearer "+metaToken
+            }
 
-        connection = http.client.HTTPSConnection(metaDomain)
-        try:
-            connection.request("POST", metaMessagesPath, data, headers)
-            response = connection.getresponse()
-        except Exception as e:
-            current_app.logger.error(f"Error en el envío de mensaje: {str(e)}")
-            #addMessageLog(json.dumps(e))
-        finally:
-            connection.close()
+            connection = http.client.HTTPSConnection(metaDomain)
+            try:
+                connection.request("POST", metaMessagesPath, data, headers)
+                response = connection.getresponse()
+            except Exception as e:
+                app_scope.logger.error(f"Error en el envío de mensaje: {str(e)}")
+                #addMessageLog(json.dumps(e))
+            finally:
+                connection.close()
 
-        del current_app.config['SESSIONS_STORE'][phoneNumber]
+            del app_scope.config['SESSIONS_STORE'][phoneNumber]
 # ======= ======= ======= ======== =======
 # ======= ======= VERITY TOKEN FUN ======= =======
 def verificar_token(req):
@@ -167,6 +168,8 @@ def generateMessageData(phoneNumber, messageList, messageCode, customText=None):
 def create_new_session_user(phoneNumber):
     userData = {
         "flowMessageCode": "",
+        "specialMessage": "",
+        "invalidMessageCount": 0,
         "ci": "",
         "name": "",
         "lastName1": "",
@@ -175,8 +178,8 @@ def create_new_session_user(phoneNumber):
         "location": "",
         "media": "",
         "mediaId":"",
-        "latitud":"",
-        "longitud":"",
+        "latitude":0,
+        "longitude":0,
         "lastAnswerDatetime":datetime.now()
     }
     current_app.config['SESSIONS_STORE'][phoneNumber] = userData
