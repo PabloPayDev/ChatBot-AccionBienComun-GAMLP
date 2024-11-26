@@ -10,7 +10,7 @@ import urllib.request
 import json
 import os
 
-from ..helpers import create_new_session_user, reduceMessageCode
+from ..helpers import create_new_session_user, reduceMessageCode, strInSublist
 from .sendMessagesHandler import sendMessage
 
 from ..messagesConfig import chatbotMessages, messagesExpectedAnswer
@@ -50,30 +50,48 @@ def onReceivedMessage(req):
                     create_new_session_user(phoneNumber)
 
                 phoneNumberData = current_app.config['SESSIONS_STORE'].get(phoneNumber, None)
+                phoneNumberData["specialMessage"] = ""
 
                 current_app.logger.debug("============")
                 current_app.logger.debug("PRE MESSAGE CODE: "+phoneNumberData["flowMessageCode"])
                 current_app.logger.debug("============")
                 
-                # ======= SPECIAL MESSAGES SECTION SECTIONS =======
-
+                # ======= SPECIAL MESSAGES SECTION =======
+                if(tipo == "text"):
+                    if( "inicio" in (messages["text"]["body"]).lower() ):
+                        phoneNumberData["specialMessage"] = "cancel"
+                        text = ""
                 # ======= ======= =======
                 # ======= VALIDATION SECTIONS =======
-                phoneNumberData["specialMessage"] = ""
-                if(phoneNumberData["flowMessageCode"]):
+                if((phoneNumberData["flowMessageCode"])and(phoneNumberData["specialMessage"] != "cancel")):
+                    validateMessage = True
                     tipoFormated = (tipo) if(tipo != "interactive") else(messages["interactive"]["type"])
-                    if( (phoneNumberData["flowMessageCode"] == "1211111111") and (tipoFormated == "image")):
+                    
+                    if( (phoneNumberData["flowMessageCode"] == "11")and(tipoFormated == "button_reply")):
+                        current_app.logger.debug("===== EXPECTED =====")
+                        if(not strInSublist(messages["interactive"]["button_reply"]["id"] ,chatbotMessages[phoneNumberData["flowMessageCode"]+"b"]["content"])):
+                            current_app.logger.debug("===== WRONG BUTTON =====")
+                            validateMessage = False
+
+                    elif( (phoneNumberData["flowMessageCode"] == "1211111111") and (tipoFormated == "image")):
                         current_app.logger.debug("===== EXPECTED =====")
                     elif(tipoFormated == messagesExpectedAnswer[chatbotMessages[phoneNumberData["flowMessageCode"]]["type"]]):
-                        current_app.logger.debug("===== EXPECTED =====")
+
+                        if(tipoFormated == "button_reply"):
+                            if(not strInSublist(messages["interactive"]["button_reply"]["id"] ,chatbotMessages[phoneNumberData["flowMessageCode"]]["content"])):
+                                current_app.logger.debug("===== WRONG BUTTON =====")
+                                validateMessage = False
+
                     else:
-                        current_app.logger.debug("====== UNEXPECTED ====")
+                        validateMessage = False
+
+                    if(not validateMessage):
                         phoneNumberData["invalidMessageCount"] += 1
                         phoneNumberData["specialMessage"] = "invalid"
                         text = ""
 
                 # ======= ======= =======
-                if(phoneNumberData["specialMessage"] != "invalid"):
+                if((phoneNumberData["specialMessage"] != "invalid")and(phoneNumberData["specialMessage"] != "cancel")):
                     # ======= SAVING SPECIAL DATA SENDED =======
                     if( phoneNumberData["flowMessageCode"]=="1211" ):
                         text = messages["interactive"]["button_reply"]["id"]
@@ -205,6 +223,9 @@ def onReceivedMessage(req):
 
                         else:
                             phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"2"
+                            phoneNumberData["invalidMessageCount"] += 1
+                            phoneNumberData["specialMessage"] = "invalid"
+                            text = ""
                     
                     elif( phoneNumberData["flowMessageCode"]=="1212111111" ):
                         text = messages["text"]["body"]

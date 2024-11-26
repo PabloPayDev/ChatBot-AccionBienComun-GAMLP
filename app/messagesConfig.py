@@ -37,9 +37,9 @@ chatbotMessages = {
         "content": [
             "¡Hola! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
             "Selecciona una de las opciones.",
-            ["btnOpt1", "Saber del programa"],
-            ["btnOpt2", "Hacer solicitud"],
-            ["btnOpt3", "Otra consulta"]
+            ["btnOpt11", "Saber del programa"],
+            ["btnOpt12", "Hacer solicitud"],
+            ["btnOpt13", "Otra consulta"]
         ]
     },
     "11t": {
@@ -53,18 +53,14 @@ chatbotMessages = {
         "content": [
             "¿Te gustaría hacer una solicitud para mejorar tu entorno?",
             "Selecciona una de las opciones.",
-            ["btnOpt1", "Hacer solicitud"],
-            ["btnOpt2", "No, gracias."],
-            ["btnOpt3", "Otra Consulta"]
+            ["btnOpt21", "Hacer solicitud"],
+            ["btnOpt22", "No, gracias."],
+            ["btnOpt23", "Otra Consulta"]
         ]
     },
     "112": { 
         "type": "text", 
         "content": ["Gracias por tu interés en los '100 Jueves de Acción por el Bien Común'. ¡Hasta pronto!"] 
-    },
-    "113": { 
-        "type": "text", 
-        "content": ["Para consultas generales, por favor, comunícate con nuestra línea gratuita al 155. ¡Estamos para ayudarte!"] 
     },
     "12": { 
         "type": "text", 
@@ -75,9 +71,9 @@ chatbotMessages = {
         "content": [
             "¡Gracias, [Nombre]! Ahora, elige una de las siguientes acciones para llevar a cabo",
             "Selecciona una de las opciones.",
-            ["btnOpt1", "Deshierbe"],
-            ["btnOpt2", "Limpieza de Aceras"],
-            ["btnOpt3", "Limpieza de Cunetas"]
+            ["btnOpt31", "Deshierbe"],
+            ["btnOpt32", "Limpieza de Aceras"],
+            ["btnOpt33", "Limpieza de Cunetas"]
         ]
     },
     "12111": { 
@@ -101,8 +97,8 @@ chatbotMessages = {
         "content": [
             "Para ayudarnos a identificar el lugar exacto, ¿podrías compartirnos la ubicación georreferenciada del sitio?",
             "Selecciona una de las opciones.",
-            ["btnOpt1", "Enviar Ubicacion"],
-            ["btnOpt2", "No tengo ubicacion"]
+            ["btnOpt41", "Enviar Ubicacion"],
+            ["btnOpt42", "No tengo ubicacion"]
         ]
     },
     "12111111": { 
@@ -114,8 +110,8 @@ chatbotMessages = {
         "content": [
             "Si tienes alguna fotografía o video del lugar, sería genial que los compartas con nosotros para que podamos entender mejor la situación.",
             "Selecciona una de las opciones.",
-            ["btnOpt1", "Enviar fotografia"],
-            ["btnOpt2", "No tengo fotografias"]
+            ["btnOpt51", "Enviar fotografia"],
+            ["btnOpt52", "No tengo fotografias"]
         ]
     },
     "1211111111": { 
@@ -131,8 +127,8 @@ chatbotMessages = {
         "content": [
             "No encontramos tu C.I. en nuestros registros. ¿Te gustaría registrarte?",
             "Selecciona una de las opciones.",
-            ["btnOpt1", "Sí, registrar"],
-            ["btnOpt2", "No, gracias"]
+            ["btnOpt61", "Sí, registrar"],
+            ["btnOpt62", "No, gracias"]
         ]
     },
     "12121": { 
@@ -195,7 +191,7 @@ reducedMessageCodes = {
     "1211111112":"12111111111",
     "12121111111": "1211",
     "12121111112": "112",
-    "113": "13",
+    "113": "13"
 }
 # ======= ======= ======= ======= =======
 # ======= ======= MESSAGES WHIT SPECIAL ANSWERS ======= =======
@@ -207,6 +203,13 @@ specialMessageCodes = [
     "12112",
     "12113",
     "12121111111",
+    "12111111111"
+]
+# ======= ======= ======= ======= =======
+# ======= ======= MESSAGES WHIT SPECIAL ANSWERS ======= =======
+endConversationMessages = [
+    "13",
+    "112",
     "12111111111"
 ]
 # ======= ======= ======= ======= =======

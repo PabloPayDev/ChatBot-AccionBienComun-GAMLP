@@ -11,6 +11,7 @@ from ..helpers import generateMessageData, reduceMessageCode
 
 from ..messagesConfig import chatbotMessages
 from ..messagesConfig import specialMessageCodes
+from ..messagesConfig import endConversationMessages
 
 # ======= ======= ======= SEND MESSAGE FUNCTION ======= ======= =======
 def sendMessage(texto, phoneNumber):
@@ -45,7 +46,7 @@ def sendMessage(texto, phoneNumber):
         connection.close()
     # ======= ======= ======= ======= =======
     # ======= ======= SEND SPECIAL MESSAGE ======= =======
-    if(("cancelar") in (texto.lower())):
+    if("cancel" == phoneNumberData["specialMessage"]):
         phoneNumberData["flowMessageCode"] = "1"
         data = generateMessageData(phoneNumber, chatbotMessages, "cancel")
         dataList.append(data)
@@ -166,8 +167,6 @@ def sendMessage(texto, phoneNumber):
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"], customText)
         dataList.append(data)
 
-        phoneNumberData["flowMessageCode"] = ""
-
     elif( phoneNumberData["flowMessageCode"]=="12121111111"):
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"])
         dataList.append(data)
@@ -175,6 +174,12 @@ def sendMessage(texto, phoneNumber):
         phoneNumberData["flowMessageCode"] = reduceMessageCode(phoneNumberData["flowMessageCode"])
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"])
         dataList.append(data)
+    # ======= ======= ======= ======= =======
+    # ======= ======= END CONVERSATION ======= =======
+    if(phoneNumberData["flowMessageCode"] in endConversationMessages):
+        phoneNumberData["flowMessageCode"] = ""
+
+    # ======= ======= ======= ======= =======
     # ======= ======= ======= ======= =======
     for dataItem in dataList:
         dataItem = json.dumps(dataItem)
@@ -192,4 +197,5 @@ def sendMessage(texto, phoneNumber):
             #addMessageLog(json.dumps(e))
         finally:
             connection.close()
+    # ======= ======= ======= ======= =======
 # ======= ======= ======= ======== ======= ======= =======

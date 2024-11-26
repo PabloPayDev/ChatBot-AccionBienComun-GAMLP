@@ -184,4 +184,12 @@ def create_new_session_user(phoneNumber):
     }
     current_app.config['SESSIONS_STORE'][phoneNumber] = userData
 # ======= ======= ======= ======== =======
+# ======= ======= ======= ======== =======
+def strInSublist(str, listScope):
+    for item in listScope:
+        if(isinstance(item, list)):
+            if(str in item):
+                return True
+    return False
+# ======= ======= ======= ======== =======
 # ======= ======= ======= ======== ======= ======= =======
