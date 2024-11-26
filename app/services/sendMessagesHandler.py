@@ -50,9 +50,9 @@ def sendMessage(texto, phoneNumber):
         phoneNumberData["flowMessageCode"] = "1"
         data = generateMessageData(phoneNumber, chatbotMessages, "cancel")
         dataList.append(data)
-    elif("invalid" == phoneNumberData["specialMessage"]):
+    elif("invalid" == phoneNumberData["specialMessage"][0:7]):
         if(phoneNumberData["invalidMessageCount"] < 3):
-            data = generateMessageData(phoneNumber, chatbotMessages, "invalid")
+            data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["specialMessage"])
         else:
             data = generateMessageData(phoneNumber, chatbotMessages, "conversationOut")
             del current_app.config['SESSIONS_STORE'][phoneNumber]

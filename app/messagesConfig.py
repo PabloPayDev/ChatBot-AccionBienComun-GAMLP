@@ -18,6 +18,30 @@ chatbotMessages = {
             "❌. Parece que la información ingresada no es válida. Por favor, asegúrate de proporcionar datos correctos."
         ] 
     },
+    "invalidNom": { 
+        "type": "text", 
+        "content": [
+            "❌. Por favor, ingresa un nombre válido. Solo se admiten letras."
+        ] 
+    },
+    "invalidPat": { 
+        "type": "text", 
+        "content": [
+            "❌. Por favor, ingresa un apellido paterno válido. Solo se admiten letras."
+        ] 
+    },
+    "invalidMat": { 
+        "type": "text", 
+        "content": [
+            "❌. Por favor, ingresa un apellido materno válido. Solo se admiten letras."
+        ] 
+    },
+    "invalidEmail": { 
+        "type": "text", 
+        "content": [
+            "❌. Por favor, ingresa un correo electrónico válido. Asegúrate de que tenga un formato correcto (por ejemplo, usuario@dominio.com)."
+        ] 
+    },
     "conversationOut": { 
         "type": "text", 
         "content": [
@@ -31,6 +55,15 @@ chatbotMessages = {
     "timeout": { 
         "type": "text", 
         "content": ["❌. Tiempo de respuesta expirado, operacion cancelada."] 
+    },
+    "0": {
+        "type": "button",
+        "content": [
+            "¡Hola! Bienvenido/a ATENAS MARIN al proyecto “100 jueves de Acción por el Bien Común”. ¿En qué puedo ayudarte hoy?",
+            "Selecciona una de las opciones.",
+            ["btnOpt01", "Hacer una solicitud"],
+            ["btnOpt02", "Hacer seguimiento"]
+        ]
     },
     "1": {
         "type": "button",

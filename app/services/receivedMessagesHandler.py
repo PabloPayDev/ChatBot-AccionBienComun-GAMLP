@@ -9,6 +9,7 @@ import http.client
 import urllib.request
 import json
 import os
+import re
 
 from ..helpers import create_new_session_user, reduceMessageCode, strInSublist
 from .sendMessagesHandler import sendMessage
@@ -91,8 +92,8 @@ def onReceivedMessage(req):
                         text = ""
 
                 # ======= ======= =======
+                # ======= SAVING SPECIAL DATA SENDED =======
                 if((phoneNumberData["specialMessage"] != "invalid")and(phoneNumberData["specialMessage"] != "cancel")):
-                    # ======= SAVING SPECIAL DATA SENDED =======
                     if( phoneNumberData["flowMessageCode"]=="1211" ):
                         text = messages["interactive"]["button_reply"]["id"]
                         phoneNumberData["reqAction"] = "Deshierbe" if (text[-1] == "1") else (phoneNumberData["reqAction"])
@@ -146,25 +147,43 @@ def onReceivedMessage(req):
 
                     elif( phoneNumberData["flowMessageCode"]=="121211" ):
                         text = messages["text"]["body"]
-                        phoneNumberData["lastName1"] = text
+                        if ((len(text) < 50)and(all(not char.isdigit() for char in text))):
+                            phoneNumberData["lastName1"] = text
+                        else:
+                            phoneNumberData["invalidMessageCount"] += 1
+                            phoneNumberData["specialMessage"] = "invalidPat"
 
                     elif( phoneNumberData["flowMessageCode"]=="1212111" ):
                         text = messages["text"]["body"]
-                        phoneNumberData["lastName2"] = text
+                        if ((len(text) < 50)and(all(not char.isdigit() for char in text))):
+                            phoneNumberData["lastName2"] = text
+                        else:
+                            phoneNumberData["invalidMessageCount"] += 1
+                            phoneNumberData["specialMessage"] = "invalidMat"
 
                     elif( phoneNumberData["flowMessageCode"]=="12121111" ):
                         text = messages["text"]["body"]
-                        phoneNumberData["name"] = text
+                        if ((len(text) < 50)and(all(not char.isdigit() for char in text))):
+                            phoneNumberData["name"] = text
+                        else:
+                            phoneNumberData["invalidMessageCount"] += 1
+                            phoneNumberData["specialMessage"] = "invalidNom"
 
                     elif( phoneNumberData["flowMessageCode"]=="121211111" ):
                         text = messages["text"]["body"]
-                        phoneNumberData["email"] = text
+                        emailPattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+                        if ((len(text) < 75)and(re.match(emailPattern, text))):
+                            phoneNumberData["email"] = text
+                        else:
+                            phoneNumberData["invalidMessageCount"] += 1
+                            phoneNumberData["specialMessage"] = "invalidEmail"
 
                     elif( phoneNumberData["flowMessageCode"]=="1212111111" ):
                         text = messages["text"]["body"]
                         phoneNumberData["password"] = text
-                    # ======= ======= =======
-                    # ======= CURRENT FLOW MESSAGE UPDATE =======
+                # ======= ======= =======
+                # ======= CURRENT FLOW MESSAGE UPDATE =======
+                if((phoneNumberData["specialMessage"][0:7] != "invalid")and(phoneNumberData["specialMessage"] != "cancel")):
                     if( phoneNumberData["flowMessageCode"]=="12" ):
                         text = messages["text"]["body"]
                         phoneNumberData["ci"] = text
@@ -283,7 +302,7 @@ def onReceivedMessage(req):
                     elif("text" in messages):
                         text = messages["text"]["body"]
                         phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"1"
-                    # ======= ======= =======
+                # ======= ======= =======
                 # ======= UPDATE FLOW MESSAGE CODE =======
                 phoneNumberData["flowMessageCode"] = reduceMessageCode(phoneNumberData["flowMessageCode"])
                 current_app.logger.debug("============")
