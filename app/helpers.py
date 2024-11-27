@@ -20,8 +20,11 @@ def cleanup_expired_sessions(app_scope):
         
         current_time = datetime.now()
         expired_users = []
+
+
         for phoneNumber, userData in app_scope.config['SESSIONS_STORE'].items():
-            expiration_time = userData["lastAnswerDatetime"] + timedelta(minutes=10)
+            timeDelta = (10) if (userData["specialState"] != "12") else (60)
+            expiration_time = userData["lastAnswerDatetime"] + timedelta(minutes=timeDelta)
             if (current_time >= expiration_time):
                 expired_users.append(phoneNumber)
 
@@ -168,7 +171,7 @@ def generateMessageData(phoneNumber, messageList, messageCode, customText=None):
 def create_new_session_user(phoneNumber):
     userData = {
         "flowMessageCode": "",
-        "specialMessage": "",
+        "specialState": "",
         "invalidMessageCount": 0,
         "ci": "",
         "name": "",

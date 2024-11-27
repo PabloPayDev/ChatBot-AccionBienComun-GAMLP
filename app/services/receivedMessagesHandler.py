@@ -14,7 +14,7 @@ import re
 from ..helpers import create_new_session_user, reduceMessageCode, strInSublist
 from .sendMessagesHandler import sendMessage
 
-from ..messagesConfig import chatbotMessages, messagesExpectedAnswer
+from ..messagesConfig import chatbotMessages, messagesExpectedAnswer, ignoreMessages
 
 gamlpToken = ""
 
@@ -51,7 +51,7 @@ def onReceivedMessage(req):
                     create_new_session_user(phoneNumber)
 
                 phoneNumberData = current_app.config['SESSIONS_STORE'].get(phoneNumber, None)
-                phoneNumberData["specialMessage"] = ""
+                phoneNumberData["specialState"] = ""
 
                 current_app.logger.debug("============")
                 current_app.logger.debug("PRE MESSAGE CODE: "+phoneNumberData["flowMessageCode"])
@@ -60,60 +60,63 @@ def onReceivedMessage(req):
                 # ======= SPECIAL MESSAGES SECTION =======
                 if(tipo == "text"):
                     if( "inicio" in (messages["text"]["body"]).lower() ):
-                        phoneNumberData["specialMessage"] = "cancel"
+                        phoneNumberData["specialState"] = "cancel"
+                        text = ""
+                    elif(("nuevasolicitud" in (messages["text"]["body"]).lower())and(phoneNumberData["flowMessageCode"] == "12")):
+                        phoneNumberData["flowMessageCode"] = ""
+                        phoneNumberData["specialState"] = ""
                         text = ""
                 # ======= ======= =======
                 # ======= VALIDATION SECTIONS =======
-                if((phoneNumberData["flowMessageCode"])and(phoneNumberData["specialMessage"] != "cancel")):
+                if((phoneNumberData["flowMessageCode"])and( phoneNumberData["specialState"] not in ignoreMessages )):
                     validateMessage = True
                     tipoFormated = (tipo) if(tipo != "interactive") else(messages["interactive"]["type"])
                     
-                    if( (phoneNumberData["flowMessageCode"] == "11")and(tipoFormated == "button_reply")):
+                    if( phoneNumberData["flowMessageCode"] == "12"):
+                        phoneNumberData["specialState"] = "freeChat"
+
+                    elif( (phoneNumberData["flowMessageCode"] == "111")and(tipoFormated == "button_reply")):
                         current_app.logger.debug("===== EXPECTED =====")
                         if(not strInSublist(messages["interactive"]["button_reply"]["id"] ,chatbotMessages[phoneNumberData["flowMessageCode"]+"b"]["content"])):
-                            current_app.logger.debug("===== WRONG BUTTON =====")
                             validateMessage = False
-
-                    elif( (phoneNumberData["flowMessageCode"] == "1211111111") and (tipoFormated == "image")):
+                    elif( (phoneNumberData["flowMessageCode"] == "11211111111") and (tipoFormated == "image")):
                         current_app.logger.debug("===== EXPECTED =====")
                     elif(tipoFormated == messagesExpectedAnswer[chatbotMessages[phoneNumberData["flowMessageCode"]]["type"]]):
 
                         if(tipoFormated == "button_reply"):
                             if(not strInSublist(messages["interactive"]["button_reply"]["id"] ,chatbotMessages[phoneNumberData["flowMessageCode"]]["content"])):
-                                current_app.logger.debug("===== WRONG BUTTON =====")
                                 validateMessage = False
-
                     else:
                         validateMessage = False
 
                     if(not validateMessage):
                         phoneNumberData["invalidMessageCount"] += 1
-                        phoneNumberData["specialMessage"] = "invalid"
+                        phoneNumberData["specialState"] = "invalid"
                         text = ""
 
                 # ======= ======= =======
                 # ======= SAVING SPECIAL DATA SENDED =======
-                if((phoneNumberData["specialMessage"] != "invalid")and(phoneNumberData["specialMessage"] != "cancel")):
-                    if( phoneNumberData["flowMessageCode"]=="1211" ):
+                if( phoneNumberData["specialState"] not in ignoreMessages ):
+                    if( phoneNumberData["flowMessageCode"]=="11211" ):
                         text = messages["interactive"]["button_reply"]["id"]
                         phoneNumberData["reqAction"] = "Deshierbe" if (text[-1] == "1") else (phoneNumberData["reqAction"])
                         phoneNumberData["reqAction"] = "Limpieza de aceras" if (text[-1] == "2") else (phoneNumberData["reqAction"])
                         phoneNumberData["reqAction"] = "Limpieza de cunetas" if (text[-1] == "3") else (phoneNumberData["reqAction"])
 
-                    elif( phoneNumberData["flowMessageCode"]=="121111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="1121111" ):
                         text = messages["text"]["body"]
                         phoneNumberData["location"] = text
 
-                    elif( phoneNumberData["flowMessageCode"]=="12111111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="112111111" ):
                         phoneNumberData["latitude"] = messages["location"]["latitude"]
                         phoneNumberData["longitude"] = messages["location"]["longitude"]
 
-                    elif( phoneNumberData["flowMessageCode"]=="121111111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="1121111111" ):
                         text = messages["interactive"]["button_reply"]["id"]
                         phoneNumberData["media"] = "Imagen enviada" if (text[-1] == "1") else (phoneNumberData["media"])
                         phoneNumberData["media"] = "Sin imagen" if (text[-1] == "2") else (phoneNumberData["media"])
 
-                    elif( phoneNumberData["flowMessageCode"]=="1211111111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="11211111111" ):
                         imageId = messages["image"]['id']
                         imageUrl = "/v20.0/"+imageId
                         if not os.path.exists(imageDirPath):
@@ -141,50 +144,50 @@ def onReceivedMessage(req):
                             current_app.logger.debug(imageUrl)
                             print(f"Getting image error: {response.status} - {response.reason}")
 
-                    elif( phoneNumberData["flowMessageCode"]=="12121" ):
+                    elif( phoneNumberData["flowMessageCode"]=="112121" ):
                         text = messages["interactive"]["list_reply"]["id"][:-1]
                         phoneNumberData["issued"] = text
 
-                    elif( phoneNumberData["flowMessageCode"]=="121211" ):
+                    elif( phoneNumberData["flowMessageCode"]=="1121211" ):
                         text = messages["text"]["body"]
                         if ((len(text) < 50)and(all(not char.isdigit() for char in text))):
                             phoneNumberData["lastName1"] = text
                         else:
                             phoneNumberData["invalidMessageCount"] += 1
-                            phoneNumberData["specialMessage"] = "invalidPat"
+                            phoneNumberData["specialState"] = "invalidPat"
 
-                    elif( phoneNumberData["flowMessageCode"]=="1212111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="11212111" ):
                         text = messages["text"]["body"]
                         if ((len(text) < 50)and(all(not char.isdigit() for char in text))):
                             phoneNumberData["lastName2"] = text
                         else:
                             phoneNumberData["invalidMessageCount"] += 1
-                            phoneNumberData["specialMessage"] = "invalidMat"
+                            phoneNumberData["specialState"] = "invalidMat"
 
-                    elif( phoneNumberData["flowMessageCode"]=="12121111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="112121111" ):
                         text = messages["text"]["body"]
                         if ((len(text) < 50)and(all(not char.isdigit() for char in text))):
                             phoneNumberData["name"] = text
                         else:
                             phoneNumberData["invalidMessageCount"] += 1
-                            phoneNumberData["specialMessage"] = "invalidNom"
+                            phoneNumberData["specialState"] = "invalidNom"
 
-                    elif( phoneNumberData["flowMessageCode"]=="121211111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="1121211111" ):
                         text = messages["text"]["body"]
                         emailPattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
                         if ((len(text) < 75)and(re.match(emailPattern, text))):
                             phoneNumberData["email"] = text
                         else:
                             phoneNumberData["invalidMessageCount"] += 1
-                            phoneNumberData["specialMessage"] = "invalidEmail"
+                            phoneNumberData["specialState"] = "invalidEmail"
 
-                    elif( phoneNumberData["flowMessageCode"]=="1212111111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="11212111111" ):
                         text = messages["text"]["body"]
                         phoneNumberData["password"] = text
                 # ======= ======= =======
                 # ======= CURRENT FLOW MESSAGE UPDATE =======
-                if((phoneNumberData["specialMessage"][0:7] != "invalid")and(phoneNumberData["specialMessage"] != "cancel")):
-                    if( phoneNumberData["flowMessageCode"]=="12" ):
+                if( phoneNumberData["specialState"] not in ignoreMessages ):
+                    if( phoneNumberData["flowMessageCode"]=="112" ):
                         text = messages["text"]["body"]
                         phoneNumberData["ci"] = text
                         if((len(text) <= 12) and (text.isdigit())):
@@ -243,10 +246,10 @@ def onReceivedMessage(req):
                         else:
                             phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"2"
                             phoneNumberData["invalidMessageCount"] += 1
-                            phoneNumberData["specialMessage"] = "invalid"
+                            phoneNumberData["specialState"] = "invalid"
                             text = ""
                     
-                    elif( phoneNumberData["flowMessageCode"]=="1212111111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="11212111111" ):
                         text = messages["text"]["body"]
                         auth = f"gamlpforo:g4m4lpf0r0of2022"
                         auth_bytes = auth.encode('utf-8')
@@ -314,7 +317,8 @@ def onReceivedMessage(req):
                 current_app.config['SESSIONS_STORE'][phoneNumber] = phoneNumberData
                 # ======= ======= =======
 
-                sendMessage(text, phoneNumber)
+                if( phoneNumberData["specialState"] != "freeChat" ):
+                    sendMessage(text, phoneNumber)
 
         return jsonify({'message':'EVENT RECEIVED'})
 

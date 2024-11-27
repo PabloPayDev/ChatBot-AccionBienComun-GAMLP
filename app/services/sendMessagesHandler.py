@@ -46,13 +46,13 @@ def sendMessage(texto, phoneNumber):
         connection.close()
     # ======= ======= ======= ======= =======
     # ======= ======= SEND SPECIAL MESSAGE ======= =======
-    if("cancel" == phoneNumberData["specialMessage"]):
+    if("cancel" == phoneNumberData["specialState"]):
         phoneNumberData["flowMessageCode"] = "1"
         data = generateMessageData(phoneNumber, chatbotMessages, "cancel")
         dataList.append(data)
-    elif("invalid" == phoneNumberData["specialMessage"][0:7]):
+    elif("invalid" == phoneNumberData["specialState"][0:7]):
         if(phoneNumberData["invalidMessageCount"] < 3):
-            data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["specialMessage"])
+            data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["specialState"])
         else:
             data = generateMessageData(phoneNumber, chatbotMessages, "conversationOut")
             del current_app.config['SESSIONS_STORE'][phoneNumber]
@@ -65,7 +65,7 @@ def sendMessage(texto, phoneNumber):
         dataList.append(data)
     # ======= ======= ======= ======= =======
     # ======= ======= SPECIAL MESSAGES ======= =======
-    elif( phoneNumberData["flowMessageCode"]=="1" ):
+    elif( phoneNumberData["flowMessageCode"]=="11" ):
         # ======= BLOG IMG SECTION =======
         blogLastPost = []
 
@@ -115,13 +115,13 @@ def sendMessage(texto, phoneNumber):
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"])
         dataList.append(data)
 
-    elif( phoneNumberData["flowMessageCode"]=="11" ):
+    elif( phoneNumberData["flowMessageCode"]=="111" ):
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"]+"t")
         dataList.append(data)
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"]+"b")
         dataList.append(data)
 
-    elif( phoneNumberData["flowMessageCode"]=="1211" ):
+    elif( phoneNumberData["flowMessageCode"]=="11211" ):
         customText = chatbotMessages[phoneNumberData["flowMessageCode"]]["content"][0]
         fullName = phoneNumberData["name"]+" "+phoneNumberData["lastName1"]+" "+phoneNumberData["lastName2"]
         customText = customText.replace("[Nombre]", fullName)
@@ -129,14 +129,14 @@ def sendMessage(texto, phoneNumber):
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"], customText)
         dataList.append(data)
 
-    elif( (phoneNumberData["flowMessageCode"]=="12111") or (phoneNumberData["flowMessageCode"]=="12112") or (phoneNumberData["flowMessageCode"]=="12113") ):
+    elif( (phoneNumberData["flowMessageCode"]=="112111") or (phoneNumberData["flowMessageCode"]=="112112") or (phoneNumberData["flowMessageCode"]=="112113") ):
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"])
         dataList.append(data)
         phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"][0:-1]+"11"
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"])
         dataList.append(data)
 
-    elif( phoneNumberData["flowMessageCode"]=="12111111111" ):
+    elif( phoneNumberData["flowMessageCode"]=="112111111111" ):
         customText = chatbotMessages[phoneNumberData["flowMessageCode"]]["content"][0]
         
         customText = customText.replace("[Numero]", phoneNumberData["ci"])
@@ -145,6 +145,27 @@ def sendMessage(texto, phoneNumber):
         customText = customText.replace("[Accion]", phoneNumberData["reqAction"])
         customText = customText.replace("[Ubicacion]", phoneNumberData["location"])
         customText = customText.replace("[Imagen]", phoneNumberData["media"])
+
+        dateObj = datetime.now()
+        formatedDate = dateObj.strftime("%A, %d de %B de %Y")
+        daysNames = {
+            'Monday': 'Lunes', 'Tuesday': 'Martes', 'Wednesday': 'Miércoles',
+            'Thursday': 'Jueves', 'Friday': 'Viernes', 'Saturday': 'Sábado',
+            'Sunday': 'Domingo'
+        }
+        monthsNames = {
+            'January': 'enero', 'February': 'febrero', 'March': 'marzo',
+            'April': 'abril', 'May': 'mayo', 'June': 'junio', 'July': 'julio',
+            'August': 'agosto', 'September': 'septiembre', 'October': 'octubre',
+            'November': 'noviembre', 'December': 'diciembre'
+        }
+        formatedDate = formatedDate.replace(
+            dateObj.strftime("%A"), daysNames[dateObj.strftime("%A")]
+        )
+        formatedDate = formatedDate.replace(
+            dateObj.strftime("%B"), monthsNames[dateObj.strftime("%B")]
+        )        
+        customText = customText.replace("[FechaSol]", formatedDate)
 
         try:
             newActionRegister = {
@@ -164,10 +185,41 @@ def sendMessage(texto, phoneNumber):
             current_app.logger.debug("======= ERROR GUARDANDO MENSAJE =======")
             current_app.logger.debug(e)
 
+        if(phoneNumberData["mediaId"]):
+            data = {
+                "messaging_product": "whatsapp",
+                "recipient_type": "individual",
+                "to": phoneNumber,
+                "type": "image",
+                "image": {
+                    "id": (phoneNumberData["mediaId"].split('/')[-1].replace('.jpg', '')), 
+                    "caption": ""
+                }
+            }
+            dataList.append(data)
+
+        if(phoneNumberData["latitude"]):
+            data = {
+                "messaging_product": "whatsapp",
+                "recipient_type": "individual",
+                "to": phoneNumber,
+                "type": "location",
+                "location": {
+                    "latitude": phoneNumberData["latitude"],
+                    "longitude": phoneNumberData["longitude"],
+                    "name": "",
+                    "address": ""
+                }
+            }
+            dataList.append(data)
+
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"], customText)
         dataList.append(data)
 
-    elif( phoneNumberData["flowMessageCode"]=="12121111111"):
+        data = generateMessageData(phoneNumber, chatbotMessages, (phoneNumberData["flowMessageCode"]+"1"))
+        dataList.append(data)
+
+    elif( phoneNumberData["flowMessageCode"]=="112121111111"):
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"])
         dataList.append(data)
         phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"1"
