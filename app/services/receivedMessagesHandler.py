@@ -62,7 +62,7 @@ def onReceivedMessage(req):
                     if( "inicio" in (messages["text"]["body"]).lower() ):
                         phoneNumberData["specialState"] = "cancel"
                         text = ""
-                    elif(("nuevasolicitud" in (messages["text"]["body"]).lower())and(phoneNumberData["flowMessageCode"] == "12")):
+                    elif(("nuevasolicitud" in (messages["text"]["body"]).lower())and(phoneNumberData["flowMessageCode"] == "13")):
                         phoneNumberData["flowMessageCode"] = ""
                         phoneNumberData["specialState"] = ""
                         text = ""
@@ -72,14 +72,14 @@ def onReceivedMessage(req):
                     validateMessage = True
                     tipoFormated = (tipo) if(tipo != "interactive") else(messages["interactive"]["type"])
                     
-                    if( phoneNumberData["flowMessageCode"] == "12"):
+                    if( phoneNumberData["flowMessageCode"] == "13"):
                         phoneNumberData["specialState"] = "freeChat"
 
-                    elif( (phoneNumberData["flowMessageCode"] == "111")and(tipoFormated == "button_reply")):
+                    elif( (phoneNumberData["flowMessageCode"] == "11")and(tipoFormated == "button_reply")):
                         current_app.logger.debug("===== EXPECTED =====")
                         if(not strInSublist(messages["interactive"]["button_reply"]["id"] ,chatbotMessages[phoneNumberData["flowMessageCode"]+"b"]["content"])):
                             validateMessage = False
-                    elif( (phoneNumberData["flowMessageCode"] == "11211111111") and (tipoFormated == "image")):
+                    elif( (phoneNumberData["flowMessageCode"] == "1211111111") and (tipoFormated == "image")):
                         current_app.logger.debug("===== EXPECTED =====")
                     elif(tipoFormated == messagesExpectedAnswer[chatbotMessages[phoneNumberData["flowMessageCode"]]["type"]]):
 
@@ -97,26 +97,26 @@ def onReceivedMessage(req):
                 # ======= ======= =======
                 # ======= SAVING SPECIAL DATA SENDED =======
                 if( phoneNumberData["specialState"] not in ignoreMessages ):
-                    if( phoneNumberData["flowMessageCode"]=="11211" ):
+                    if( phoneNumberData["flowMessageCode"]=="1211" ):
                         text = messages["interactive"]["button_reply"]["id"]
                         phoneNumberData["reqAction"] = "Deshierbe" if (text[-1] == "1") else (phoneNumberData["reqAction"])
                         phoneNumberData["reqAction"] = "Limpieza de aceras" if (text[-1] == "2") else (phoneNumberData["reqAction"])
                         phoneNumberData["reqAction"] = "Limpieza de cunetas" if (text[-1] == "3") else (phoneNumberData["reqAction"])
 
-                    elif( phoneNumberData["flowMessageCode"]=="1121111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="121111" ):
                         text = messages["text"]["body"]
                         phoneNumberData["location"] = text
 
-                    elif( phoneNumberData["flowMessageCode"]=="112111111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="12111111" ):
                         phoneNumberData["latitude"] = messages["location"]["latitude"]
                         phoneNumberData["longitude"] = messages["location"]["longitude"]
 
-                    elif( phoneNumberData["flowMessageCode"]=="1121111111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="121111111" ):
                         text = messages["interactive"]["button_reply"]["id"]
                         phoneNumberData["media"] = "Imagen enviada" if (text[-1] == "1") else (phoneNumberData["media"])
                         phoneNumberData["media"] = "Sin imagen" if (text[-1] == "2") else (phoneNumberData["media"])
 
-                    elif( phoneNumberData["flowMessageCode"]=="11211111111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="1211111111" ):
                         imageId = messages["image"]['id']
                         imageUrl = "/v20.0/"+imageId
                         if not os.path.exists(imageDirPath):
@@ -144,11 +144,11 @@ def onReceivedMessage(req):
                             current_app.logger.debug(imageUrl)
                             print(f"Getting image error: {response.status} - {response.reason}")
 
-                    elif( phoneNumberData["flowMessageCode"]=="112121" ):
+                    elif( phoneNumberData["flowMessageCode"]=="12121" ):
                         text = messages["interactive"]["list_reply"]["id"][:-1]
                         phoneNumberData["issued"] = text
 
-                    elif( phoneNumberData["flowMessageCode"]=="1121211" ):
+                    elif( phoneNumberData["flowMessageCode"]=="121211" ):
                         text = messages["text"]["body"]
                         if ((len(text) < 50)and(all(not char.isdigit() for char in text))):
                             phoneNumberData["lastName1"] = text
@@ -156,7 +156,7 @@ def onReceivedMessage(req):
                             phoneNumberData["invalidMessageCount"] += 1
                             phoneNumberData["specialState"] = "invalidPat"
 
-                    elif( phoneNumberData["flowMessageCode"]=="11212111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="1212111" ):
                         text = messages["text"]["body"]
                         if ((len(text) < 50)and(all(not char.isdigit() for char in text))):
                             phoneNumberData["lastName2"] = text
@@ -164,7 +164,7 @@ def onReceivedMessage(req):
                             phoneNumberData["invalidMessageCount"] += 1
                             phoneNumberData["specialState"] = "invalidMat"
 
-                    elif( phoneNumberData["flowMessageCode"]=="112121111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="12121111" ):
                         text = messages["text"]["body"]
                         if ((len(text) < 50)and(all(not char.isdigit() for char in text))):
                             phoneNumberData["name"] = text
@@ -172,7 +172,7 @@ def onReceivedMessage(req):
                             phoneNumberData["invalidMessageCount"] += 1
                             phoneNumberData["specialState"] = "invalidNom"
 
-                    elif( phoneNumberData["flowMessageCode"]=="1121211111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="121211111" ):
                         text = messages["text"]["body"]
                         emailPattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
                         if ((len(text) < 75)and(re.match(emailPattern, text))):
@@ -181,13 +181,10 @@ def onReceivedMessage(req):
                             phoneNumberData["invalidMessageCount"] += 1
                             phoneNumberData["specialState"] = "invalidEmail"
 
-                    elif( phoneNumberData["flowMessageCode"]=="11212111111" ):
-                        text = messages["text"]["body"]
-                        phoneNumberData["password"] = text
                 # ======= ======= =======
                 # ======= CURRENT FLOW MESSAGE UPDATE =======
                 if( phoneNumberData["specialState"] not in ignoreMessages ):
-                    if( phoneNumberData["flowMessageCode"]=="112" ):
+                    if( phoneNumberData["flowMessageCode"]=="12" ):
                         text = messages["text"]["body"]
                         phoneNumberData["ci"] = text
                         if((len(text) <= 12) and (text.isdigit())):
@@ -249,7 +246,7 @@ def onReceivedMessage(req):
                             phoneNumberData["specialState"] = "invalid"
                             text = ""
                     
-                    elif( phoneNumberData["flowMessageCode"]=="11212111111" ):
+                    elif( phoneNumberData["flowMessageCode"]=="121211111" ):
                         text = messages["text"]["body"]
                         auth = f"gamlpforo:g4m4lpf0r0of2022"
                         auth_bytes = auth.encode('utf-8')
@@ -268,7 +265,7 @@ def onReceivedMessage(req):
                             "movil":phoneNumber,
                             "correo":phoneNumberData["email"],
                             "sistema":"WEB_FORO",
-                            "contrasenia":phoneNumberData["password"]
+                            "contrasenia":""
                         }
                         data = json.dumps(data)
                         connection = http.client.HTTPConnection(gamlpDomain, gamlpPort)

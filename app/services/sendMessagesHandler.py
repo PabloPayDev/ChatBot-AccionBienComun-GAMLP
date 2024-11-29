@@ -4,6 +4,7 @@
 # ======= ======= ======== ======= ======= ======= =======
 from flask import current_app
 from datetime import date, datetime
+import time
 import http.client
 import json
 
@@ -48,8 +49,8 @@ def sendMessage(texto, phoneNumber):
     # ======= ======= SEND SPECIAL MESSAGE ======= =======
     if("cancel" == phoneNumberData["specialState"]):
         phoneNumberData["flowMessageCode"] = "1"
-        data = generateMessageData(phoneNumber, chatbotMessages, "cancel")
-        dataList.append(data)
+        #data = generateMessageData(phoneNumber, chatbotMessages, "cancel")
+        #dataList.append(data)
     elif("invalid" == phoneNumberData["specialState"][0:7]):
         if(phoneNumberData["invalidMessageCount"] < 3):
             data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["specialState"])
@@ -65,7 +66,7 @@ def sendMessage(texto, phoneNumber):
         dataList.append(data)
     # ======= ======= ======= ======= =======
     # ======= ======= SPECIAL MESSAGES ======= =======
-    elif( phoneNumberData["flowMessageCode"]=="11" ):
+    elif( phoneNumberData["flowMessageCode"]=="1" ):
         # ======= BLOG IMG SECTION =======
         blogLastPost = []
 
@@ -115,13 +116,26 @@ def sendMessage(texto, phoneNumber):
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"])
         dataList.append(data)
 
-    elif( phoneNumberData["flowMessageCode"]=="111" ):
-        data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"]+"t")
+        data = generateMessageData(phoneNumber, chatbotMessages,"113")
+        dataList.append(data)
+
+    elif( phoneNumberData["flowMessageCode"]=="11" ):
+        #data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"]+"t")
+        data = {
+            "messaging_product": "whatsapp",
+            "recipient_type": "individual",
+            "to": phoneNumber,
+            "type": "video",
+            "video": {
+                "link": "https://lapaz.bo/videos/video-100-jueves.mp4",
+                "caption": "El programa ‘100 Jueves de Acción por el Bien Común’ busca mejorar los espacios públicos a través de acciones como deshierbe, limpieza de aceras y cunetas. ¡Participa haciendo una solicitud!"
+            }
+        }
         dataList.append(data)
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"]+"b")
         dataList.append(data)
 
-    elif( phoneNumberData["flowMessageCode"]=="11211" ):
+    elif( phoneNumberData["flowMessageCode"]=="1211" ):
         customText = chatbotMessages[phoneNumberData["flowMessageCode"]]["content"][0]
         fullName = phoneNumberData["name"]+" "+phoneNumberData["lastName1"]+" "+phoneNumberData["lastName2"]
         customText = customText.replace("[Nombre]", fullName)
@@ -129,14 +143,14 @@ def sendMessage(texto, phoneNumber):
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"], customText)
         dataList.append(data)
 
-    elif( (phoneNumberData["flowMessageCode"]=="112111") or (phoneNumberData["flowMessageCode"]=="112112") or (phoneNumberData["flowMessageCode"]=="112113") ):
+    elif( (phoneNumberData["flowMessageCode"]=="12111") or (phoneNumberData["flowMessageCode"]=="12112") or (phoneNumberData["flowMessageCode"]=="12113") ):
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"])
         dataList.append(data)
         phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"][0:-1]+"11"
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"])
         dataList.append(data)
 
-    elif( phoneNumberData["flowMessageCode"]=="112111111111" ):
+    elif( phoneNumberData["flowMessageCode"]=="12111111111" ):
         customText = chatbotMessages[phoneNumberData["flowMessageCode"]]["content"][0]
         
         customText = customText.replace("[Numero]", phoneNumberData["ci"])
@@ -185,6 +199,9 @@ def sendMessage(texto, phoneNumber):
             current_app.logger.debug("======= ERROR GUARDANDO MENSAJE =======")
             current_app.logger.debug(e)
 
+        data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"], customText)
+        dataList.append(data)
+
         if(phoneNumberData["mediaId"]):
             data = {
                 "messaging_product": "whatsapp",
@@ -193,7 +210,7 @@ def sendMessage(texto, phoneNumber):
                 "type": "image",
                 "image": {
                     "id": (phoneNumberData["mediaId"].split('/')[-1].replace('.jpg', '')), 
-                    "caption": ""
+                    "caption": "Imagen enviada."
                 }
             }
             dataList.append(data)
@@ -207,19 +224,16 @@ def sendMessage(texto, phoneNumber):
                 "location": {
                     "latitude": phoneNumberData["latitude"],
                     "longitude": phoneNumberData["longitude"],
-                    "name": "",
+                    "name": "Ubicacion enviada.",
                     "address": ""
                 }
             }
             dataList.append(data)
 
-        data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"], customText)
-        dataList.append(data)
-
         data = generateMessageData(phoneNumber, chatbotMessages, (phoneNumberData["flowMessageCode"]+"1"))
         dataList.append(data)
 
-    elif( phoneNumberData["flowMessageCode"]=="112121111111"):
+    elif( phoneNumberData["flowMessageCode"]=="11212111111"):
         data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"])
         dataList.append(data)
         phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"1"
@@ -230,6 +244,7 @@ def sendMessage(texto, phoneNumber):
     # ======= ======= END CONVERSATION ======= =======
     if(phoneNumberData["flowMessageCode"] in endConversationMessages):
         phoneNumberData["flowMessageCode"] = ""
+        del current_app.config['SESSIONS_STORE'][phoneNumber]
 
     # ======= ======= ======= ======= =======
     # ======= ======= ======= ======= =======
@@ -244,10 +259,12 @@ def sendMessage(texto, phoneNumber):
         try:
             connection.request("POST", metaMessagesPath, dataItem, headers)
             response = connection.getresponse().read().decode('utf-8')
+            #current_app.logger.error(response)
         except Exception as e:
             current_app.logger.error(f"Error en el envío de mensaje: {str(e)}")
             #addMessageLog(json.dumps(e))
         finally:
             connection.close()
+            time.sleep(0.1)
     # ======= ======= ======= ======= =======
 # ======= ======= ======= ======== ======= ======= =======
