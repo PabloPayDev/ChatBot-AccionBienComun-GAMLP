@@ -174,6 +174,7 @@ def create_new_session_user(phoneNumber):
         "specialState": "",
         "invalidMessageCount": 0,
         "ci": "",
+        "whatsappName": "",
         "name": "",
         "lastName1": "",
         "lastName2": "",

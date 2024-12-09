@@ -113,10 +113,13 @@ def sendMessage(texto, phoneNumber):
             print(f"Error en la solicitud: {response.status} {response.reason}")
         conn.close()
         # ======= ======= =======
-        data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"])
+        customText = chatbotMessages[phoneNumberData["flowMessageCode"]]["content"][0]
+        customText = customText.replace("[whatsappName]", phoneNumberData["whatsappName"])
+
+        data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"], customText)
         dataList.append(data)
 
-        data = generateMessageData(phoneNumber, chatbotMessages,"113")
+        data = generateMessageData(phoneNumber, chatbotMessages, "113")
         dataList.append(data)
 
     elif( phoneNumberData["flowMessageCode"]=="11" ):
@@ -259,12 +262,12 @@ def sendMessage(texto, phoneNumber):
         try:
             connection.request("POST", metaMessagesPath, dataItem, headers)
             response = connection.getresponse().read().decode('utf-8')
-            #current_app.logger.error(response)
+            current_app.logger.debug(response)
         except Exception as e:
             current_app.logger.error(f"Error en el envío de mensaje: {str(e)}")
             #addMessageLog(json.dumps(e))
         finally:
             connection.close()
-            time.sleep(0.1)
+            time.sleep(0.3)
     # ======= ======= ======= ======= =======
 # ======= ======= ======= ======== ======= ======= =======

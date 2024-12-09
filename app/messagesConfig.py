@@ -18,6 +18,12 @@ chatbotMessages = {
             "❌. Parece que la información ingresada no es válida. Por favor, asegúrate de proporcionar datos correctos."
         ] 
     },
+    "invalidCi": { 
+        "type": "text", 
+        "content": [
+            "❌ Por favor, ingresa un C.I. válido. Solo se admiten números y debe tener un mínimo de 5 dígitos."
+        ] 
+    },
     "invalidNom": { 
         "type": "text", 
         "content": [
@@ -59,7 +65,7 @@ chatbotMessages = {
     "1": {
         "type": "button",
         "content": [
-            "¡Hola! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
+            "¡Hola [whatsappName]! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
             "Selecciona una de las opciones.",
             ["btnOpt21", "Saber del programa"],
             ["btnOpt22", "Hacer solicitud"],
@@ -84,11 +90,11 @@ chatbotMessages = {
     },
     "112": { 
         "type": "text", 
-        "content": ["Gracias por tu interés en los '100 Jueves de Acción por el Bien Común'. ¡Hasta pronto!"] 
+        "content": ["😊 Gracias por tu interés en los '100 Jueves de Acción por el Bien Común'.\n ¡Hasta pronto! "] 
     },
     "113": { 
         "type": "text", 
-        "content": ["Para consultas generales, por favor, comunícate con nuestra línea gratuita al 155. ¡Estamos para ayudarte!"] 
+        "content": ["✅ Para consultas generales, por favor, comunícate con nuestra línea gratuita al 155."] 
     },
     "12": { 
         "type": "text", 
@@ -97,7 +103,7 @@ chatbotMessages = {
     "1211": {
         "type": "button",
         "content": [
-            "¡Gracias, [Nombre]! Ahora, elige una de las siguientes acciones para llevar a cabo",
+            "👋¡Hola, [Nombre]!\n Elige una de las siguientes acciones para llevar a cabo:",
             "Selecciona una de las opciones.",
             ["btnOpt41", "Deshierbe"],
             ["btnOpt42", "Limpieza de Aceras"],
@@ -106,15 +112,15 @@ chatbotMessages = {
     },
     "12111": { 
         "type": "text", 
-        "content": ["¡Genial, deshierbar es una excelente manera de embellecer nuestra comunidad!"] 
+        "content": ["👍🏻¡Genial, deshierbar es una excelente manera de embellecer nuestra comunidad!"] 
     },
     "12112": { 
         "type": "text", 
-        "content": ["¡Perfecto, mantener las aceras limpias es crucial para una ciudad segura y acogedora!"] 
+        "content": ["👍🏻¡Perfecto, mantener las aceras limpias es crucial para una ciudad segura y acogedora!"] 
     },
     "12113": { 
         "type": "text", 
-        "content": ["¡Excelente, limpiar las cunetas ayuda a prevenir inundaciones y a mantener nuestras calles en buen estado!"] 
+        "content": ["👍🏻¡Excelente, limpiar las cunetas ayuda a prevenir inundaciones y a mantener nuestras calles en buen estado!"] 
     },
     "121111": { 
         "type": "text", 
@@ -123,7 +129,7 @@ chatbotMessages = {
     "1211111": {
         "type": "button",
         "content": [
-            "Para ayudarnos a identificar el lugar exacto, ¿podrías compartirnos la ubicación georreferenciada del sitio?",
+            "📍Para ayudarnos a identificar el lugar exacto, ¿Podrías compartirnos la ubicación del lugar?",
             "Selecciona una de las opciones.",
             ["btnOpt51", "Enviar Ubicacion"],
             ["btnOpt52", "No tengo ubicacion"]
@@ -136,7 +142,7 @@ chatbotMessages = {
     "121111111": {
         "type": "button",
         "content": [
-            "Si tienes alguna fotografía o video del lugar, sería genial que los compartas con nosotros para que podamos entender mejor la situación.",
+            "📷 Si tienes alguna fotografía, sería genial que nos compartas para entender mejor la situación.",
             "Selecciona una de las opciones.",
             ["btnOpt61", "Enviar fotografia"],
             ["btnOpt62", "No tengo fotografias"]
@@ -243,7 +249,8 @@ ignoreMessages = [
     "invalidNom",
     "invalidemail",
     "cancel",
-    "freeChat"
+    "freeChat",
+    "ignore"
 ]
 # ======= ======= ======= ======= =======
 # ======= ======= MESSAGES WHIT SPECIAL ANSWERS ======= =======

@@ -60,11 +60,15 @@ def onReceivedMessage(req):
                 # ======= SPECIAL MESSAGES SECTION =======
                 if(tipo == "text"):
                     if( "inicio" in (messages["text"]["body"]).lower() ):
+                        phoneNumberData["whatsappName"] = value["contacts"][0]["profile"]["name"]
                         phoneNumberData["specialState"] = "cancel"
                         text = ""
-                    elif(("nuevasolicitud" in (messages["text"]["body"]).lower())and(phoneNumberData["flowMessageCode"] == "13")):
+                    elif(("100jueves" in (messages["text"]["body"]).lower())and(phoneNumberData["flowMessageCode"] == "13")):
                         phoneNumberData["flowMessageCode"] = ""
-                        phoneNumberData["specialState"] = ""
+                        text = ""
+                    elif(("salirahora" in (messages["text"]["body"]).lower())and(phoneNumberData["flowMessageCode"] == "13")):
+                        phoneNumberData["flowMessageCode"] = "112"
+                        phoneNumberData["specialState"] = "ignore"
                         text = ""
                 # ======= ======= =======
                 # ======= VALIDATION SECTIONS =======
@@ -97,6 +101,9 @@ def onReceivedMessage(req):
                 # ======= ======= =======
                 # ======= SAVING SPECIAL DATA SENDED =======
                 if( phoneNumberData["specialState"] not in ignoreMessages ):
+                    if( phoneNumberData["flowMessageCode"]=="" ):
+                        phoneNumberData["whatsappName"] = value["contacts"][0]["profile"]["name"]
+
                     if( phoneNumberData["flowMessageCode"]=="1211" ):
                         text = messages["interactive"]["button_reply"]["id"]
                         phoneNumberData["reqAction"] = "Deshierbe" if (text[-1] == "1") else (phoneNumberData["reqAction"])
@@ -243,7 +250,7 @@ def onReceivedMessage(req):
                         else:
                             phoneNumberData["flowMessageCode"] = phoneNumberData["flowMessageCode"]+"2"
                             phoneNumberData["invalidMessageCount"] += 1
-                            phoneNumberData["specialState"] = "invalid"
+                            phoneNumberData["specialState"] = "invalidCi"
                             text = ""
                     
                     elif( phoneNumberData["flowMessageCode"]=="121211111" ):
@@ -312,6 +319,9 @@ def onReceivedMessage(req):
                 # ======= UPDATE DATA IN REDIS =======
                 phoneNumberData["lastAnswerDatetime"] = datetime.now()
                 current_app.config['SESSIONS_STORE'][phoneNumber] = phoneNumberData
+                # ======= ======= =======
+                # ======= RESET IGNORE =======
+                current_app.config['SESSIONS_STORE'][phoneNumber]["specialState"] = phoneNumberData["specialState"] if(phoneNumberData["specialState"] != "ignore") else("")
                 # ======= ======= =======
 
                 if( phoneNumberData["specialState"] != "freeChat" ):
