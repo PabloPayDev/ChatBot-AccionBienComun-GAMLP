@@ -55,9 +55,14 @@ def sendMessage(texto, phoneNumber):
         if(phoneNumberData["invalidMessageCount"] < 3):
             data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["specialState"])
         else:
-            data = generateMessageData(phoneNumber, chatbotMessages, "conversationOut")
-            del current_app.config['SESSIONS_STORE'][phoneNumber]
-            phoneNumberData["flowMessageCode"] = ""
+            if("12121" in phoneNumberData["flowMessageCode"]):
+                data = generateMessageData(phoneNumber, chatbotMessages, "conversationOut")
+                del current_app.config['SESSIONS_STORE'][phoneNumber]
+                phoneNumberData["flowMessageCode"] = ""
+            else:
+                data = generateMessageData(phoneNumber, chatbotMessages, "conversationOut155")
+                del current_app.config['SESSIONS_STORE'][phoneNumber]
+                phoneNumberData["flowMessageCode"] = ""
         dataList.append(data)
     # ======= ======= ======= ======= =======
     # ======= ======= SEND COMMOND FORMAT MESSAGE ======= =======
@@ -131,7 +136,7 @@ def sendMessage(texto, phoneNumber):
             "type": "video",
             "video": {
                 "link": "https://lapaz.bo/videos/video-100-jueves.mp4",
-                "caption": "El programa ‘100 Jueves de Acción por el Bien Común’ busca mejorar los espacios públicos a través de acciones como deshierbe, limpieza de aceras y cunetas. ¡Participa haciendo una solicitud!"
+                "caption": ""
             }
         }
         dataList.append(data)
@@ -154,6 +159,23 @@ def sendMessage(texto, phoneNumber):
         dataList.append(data)
 
     elif( phoneNumberData["flowMessageCode"]=="12111111111" ):
+        # ======= SEND IMAGE IF EXIST =======
+        """
+        if(phoneNumberData["mediaId"]):
+            data = {
+                "messaging_product": "whatsapp",
+                "recipient_type": "individual",
+                "to": phoneNumber,
+                "type": "image",
+                "image": {
+                    "id": (phoneNumberData["mediaId"].split('/')[-1].replace('.jpg', '')), 
+                    "caption": "Imagen enviada."
+                }
+            }
+            dataList.append(data)
+        """
+        # ======= ======= =======
+        # ======= SEND SUMMARY =======
         customText = chatbotMessages[phoneNumberData["flowMessageCode"]]["content"][0]
         
         customText = customText.replace("[Numero]", phoneNumberData["ci"])
@@ -184,6 +206,29 @@ def sendMessage(texto, phoneNumber):
         )        
         customText = customText.replace("[FechaSol]", formatedDate)
 
+        data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"], customText)
+        dataList.append(data)
+        # ======= ======= =======
+        # ======= SEND LOCATION IF EXIST =======
+        if(phoneNumberData["latitude"]):
+            data = {
+                "messaging_product": "whatsapp",
+                "recipient_type": "individual",
+                "to": phoneNumber,
+                "type": "location",
+                "location": {
+                    "latitude": phoneNumberData["latitude"],
+                    "longitude": phoneNumberData["longitude"],
+                    "name": "Ubicacion enviada.",
+                    "address": ""
+                }
+            }
+            dataList.append(data)
+        # ======= ======= =======
+
+    elif( phoneNumberData["flowMessageCode"]=="121111111111" ):
+        fullName = phoneNumberData["name"]+" "+phoneNumberData["lastName1"]+" "+phoneNumberData["lastName2"]
+
         try:
             newActionRegister = {
                 "phoneNumber":phoneNumber,
@@ -199,41 +244,13 @@ def sendMessage(texto, phoneNumber):
             collection = db['data']
             collection.insert_one(newActionRegister)
         except Exception as e:
-            current_app.logger.debug("======= ERROR GUARDANDO MENSAJE =======")
+            current_app.logger.debug("======= ERROR GUARDANDO RESUMEN =======")
             current_app.logger.debug(e)
 
-        data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"], customText)
+        data = generateMessageData(phoneNumber, chatbotMessages, phoneNumberData["flowMessageCode"])
         dataList.append(data)
-
-        if(phoneNumberData["mediaId"]):
-            data = {
-                "messaging_product": "whatsapp",
-                "recipient_type": "individual",
-                "to": phoneNumber,
-                "type": "image",
-                "image": {
-                    "id": (phoneNumberData["mediaId"].split('/')[-1].replace('.jpg', '')), 
-                    "caption": "Imagen enviada."
-                }
-            }
-            dataList.append(data)
-
-        if(phoneNumberData["latitude"]):
-            data = {
-                "messaging_product": "whatsapp",
-                "recipient_type": "individual",
-                "to": phoneNumber,
-                "type": "location",
-                "location": {
-                    "latitude": phoneNumberData["latitude"],
-                    "longitude": phoneNumberData["longitude"],
-                    "name": "Ubicacion enviada.",
-                    "address": ""
-                }
-            }
-            dataList.append(data)
-
-        data = generateMessageData(phoneNumber, chatbotMessages, (phoneNumberData["flowMessageCode"]+"1"))
+            
+        data = generateMessageData(phoneNumber, chatbotMessages, "resetChat")
         dataList.append(data)
 
     elif( phoneNumberData["flowMessageCode"]=="11212111111"):

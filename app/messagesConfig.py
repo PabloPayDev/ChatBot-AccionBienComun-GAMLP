@@ -51,6 +51,12 @@ chatbotMessages = {
     "conversationOut": { 
         "type": "text", 
         "content": [
+            "❌. Estoy aquí para ayudarte, pero parece que hemos recibido información incorrecta varias veces."
+        ] 
+    },
+    "conversationOut155": { 
+        "type": "text", 
+        "content": [
             "❌. Estoy aquí para ayudarte, pero parece que hemos recibido información incorrecta varias veces. Si no puedes continuar, te sugiero que nos llames al 155 para más ayuda"
         ] 
     },
@@ -62,10 +68,14 @@ chatbotMessages = {
         "type": "text", 
         "content": ["❌. Tiempo de respuesta expirado, operacion cancelada."] 
     },
+    "resetChat": { 
+        "type": "text", 
+        "content": ["Puedes escribir la palabra clave *'Inicio'* en cualquier momento para regresar al menú principal."] 
+    },
     "1": {
         "type": "button",
         "content": [
-            "¡Hola [whatsappName]! Bienvenido/a al proyecto 100 jueves de Acción por el Bien Común. Estoy aquí para ayudarte a contribuir a nuestra comunidad. 😊",
+            "¡Hola! Bienvenido/a [whatsappName] al proyecto \"100 jueves de Acción por el Bien Común\". ¿En que puedo ayudarte hoy?. 😊",
             "Selecciona una de las opciones.",
             ["btnOpt21", "Saber del programa"],
             ["btnOpt22", "Hacer solicitud"],
@@ -75,13 +85,13 @@ chatbotMessages = {
     "11t": {
         "type": "text",
         "content": [
-            "El programa ‘100 Jueves de Acción por el Bien Común’ busca mejorar los espacios públicos a través de acciones como deshierbe, limpieza de aceras y cunetas. ¡Participa haciendo una solicitud!",
+            "El programa 100 Jueves de Acción por el Bien Común, busca mejorar los espacios públicos a través de acciones como deshierbe, limpieza de aceras y cunetas.",
         ]
     },
     "11b": {
         "type": "button",
         "content": [
-            "¿Te gustaría hacer una solicitud para mejorar tu entorno?",
+            "El programa 100 Jueves de Acción por el Bien Común, busca mejorar los espacios públicos a través de acciones como deshierbe, limpieza de aceras y cunetas.",
             "Selecciona una de las opciones.",
             ["btnOpt31", "Hacer solicitud"],
             ["btnOpt32", "No, gracias."],
@@ -94,11 +104,11 @@ chatbotMessages = {
     },
     "113": { 
         "type": "text", 
-        "content": ["✅ Para consultas generales, por favor, comunícate con nuestra línea gratuita al 155."] 
+        "content": ["Si tienes otro tipo de consulta, comunícate con nuestra línea gratuita al 155."] 
     },
     "12": { 
         "type": "text", 
-        "content": ["Por favor, ingresa tu Cédula de Identidad (C.I.) para continuar."] 
+        "content": ["Por favor, ingresa tu cédula de identidad (C.I.) para continuar."] 
     },
     "1211": {
         "type": "button",
@@ -124,7 +134,7 @@ chatbotMessages = {
     },
     "121111": { 
         "type": "text", 
-        "content": ["📍¿Dónde te gustaría que realizáramos esta acción?\n Describe la dirección del lugar con la mayor precisión posible (Ej: Zona, calle/avenida, al lado de, frente a)."] 
+        "content": ["📍¿Dónde te gustaría que realizáramos esta acción?\nDescribe la dirección del lugar con la mayor precisión posible (Ej: Zona, calle/avenida, al lado de, frente a)."] 
     },
     "1211111": {
         "type": "button",
@@ -153,12 +163,17 @@ chatbotMessages = {
         "content": ["Por favor, envíenos la foto o video."] 
     },
     "12111111111": { 
-        "type": "text", 
-        "content": ["¡Perfecto! [Nombre] aquí tienes un resumen de tu solicitud:\n\n ✅ Acción solicitada: [Accion]\n ✅ C.I.: [Numero]\n ✅ Nombre: [Nombre]\n ✅ Direccion: [Ubicacion]\n ✅ Foto: [Imagen]\n ✅ Fecha solicitud: [FechaSol]\n Tu solicitud ha sido registrada y será sometida a una inspección previa para asegurar que podamos realizar la acción de la mejor manera posible. ¡Gracias por tu contribución!"] 
+        "type": "button", 
+        "content": [
+            "¡Gracias [Nombre]! te muestro un resumen de la informacion que enviaras:\n\n ✅ Acción solicitada: [Accion]\n ✅ C.I.: [Numero]\n ✅ Nombre: [Nombre]\n ✅ Direccion: [Ubicacion]\n ✅ Foto: [Imagen]\n ✅ Fecha solicitud: [FechaSol]\n Tu solicitud ha sido registrada y será sometida a una inspección previa para asegurar que podamos realizar la acción de la mejor manera posible. ¡Gracias por tu contribución!",
+            "Selecciona una de las opciones.",
+            ["btnOpt81", "Si, enviar solicitud"],
+            ["btnOpt82", "No, nueva solicitud"]
+        ] 
     },
     "121111111111": { 
         "type": "text", 
-        "content": ["Puedes escribir la palabra clave 'Inicio' en cualquier momento para detener la acción actual y regresar al menú principal."] 
+        "content": ["Tu solicitud ha sido registrada, será sometida a una inspección previa para asegurar que podamos realizar la acción de la mejor manera posible."] 
     },
     "1212": {
         "type": "button",
@@ -172,7 +187,7 @@ chatbotMessages = {
     "12121": { 
         "type": "list", 
         "content": [
-            "Por favor, ingresa los siguientes datos para registrarte.\n\n Expedido",
+            "Por favor, ingresa el departamento en el que fue expedido tu carnet de identidad.",
             "Selecciona una de las opciones.",
             "Ver extenciones.",
             ["LPZ1", "LPZ", "Expedido en La Paz"],
@@ -213,7 +228,7 @@ chatbotMessages = {
     "13": {
         "type": "text",
         "content": [
-            "🙋🏻Modo seguimiento:\n ▪ Si deseas cambiar a hacer una solicitud escribe: NuevaSolicitud",
+            "🙋🏻Ahora puedes hacer el seguimiento de tu solicitud y un operador podra atenderte.\n*¿Que consulta tienes?*",
         ]
     }
 }
@@ -225,6 +240,7 @@ reducedMessageCodes = {
     "12122": "112",
     "12111112":"121111111",
     "1211111112":"12111111111",
+    "121111111112":"1211",
     "1212111111": "1211",
     "1212111112": "112"
 }
@@ -238,7 +254,8 @@ specialMessageCodes = [
     "12112",
     "12113",
     "1212111111",
-    "12111111111"
+    "12111111111",
+    "121111111111"
 ]
 # ======= ======= ======= ======= =======
 # ======= ======= IGNORE MESSAGE STATE/CODES ======= =======
@@ -257,7 +274,7 @@ ignoreMessages = [
 endConversationMessages = [
     "113",
     "112",
-    "12111111111"
+    "121111111111"
 ]
 # ======= ======= ======= ======= =======
 # ======= ======= MESSAGES SPECTED ANSWERS ======= =======

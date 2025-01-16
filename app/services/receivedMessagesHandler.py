@@ -64,7 +64,8 @@ def onReceivedMessage(req):
                         phoneNumberData["specialState"] = "cancel"
                         text = ""
                     elif(("100jueves" in (messages["text"]["body"]).lower())and(phoneNumberData["flowMessageCode"] == "13")):
-                        phoneNumberData["flowMessageCode"] = ""
+                        phoneNumberData["flowMessageCode"] = "12"
+                        phoneNumberData["specialState"] = "ignore"
                         text = ""
                     elif(("salirahora" in (messages["text"]["body"]).lower())and(phoneNumberData["flowMessageCode"] == "13")):
                         phoneNumberData["flowMessageCode"] = "112"

@@ -23,7 +23,7 @@ def cleanup_expired_sessions(app_scope):
 
 
         for phoneNumber, userData in app_scope.config['SESSIONS_STORE'].items():
-            timeDelta = (10) if (userData["specialState"] != "12") else (60)
+            timeDelta = (10) if (userData["specialState"] != "12") else (43200)
             expiration_time = userData["lastAnswerDatetime"] + timedelta(minutes=timeDelta)
             if (current_time >= expiration_time):
                 expired_users.append(phoneNumber)
